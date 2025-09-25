@@ -1,0 +1,217 @@
+/* Container principal centré verticalement et horizontalement */
+.signup-page {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: 'Hero Bold', Hero, sans-serif;
+    background: linear-gradient(135deg, #2f5944, #4b986c);
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Canvas particules derrière */
+#particles-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Wrapper des deux blocs */
+.signup-wrapper {
+    display: flex;
+    width: 900px;
+    max-width: 100%;
+    background: rgba(52, 106, 78, 0.75);
+    border-radius: 20px;
+    box-shadow: -10px -5px 35px rgba(255, 255, 255, 0.47);
+    overflow: hidden;
+    z-index: 1;
+}
+
+/* Partie gauche : illustration + texte */
+.signup-left {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.08);
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 40px;
+    text-align: center;
+    gap: 30px;
+    box-shadow: inset -10px 0 30px rgba(255, 255, 255, 0.21);
+}
+
+/* Logo */
+.signup-logo {
+    max-width: 280px;
+    width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+/* Texte d'accroche */
+.signup-motto {
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1.3;
+    user-select: none;
+}
+
+/* Partie droite : formulaire */
+.signup-right {
+    flex: 1;
+    background: #fff;
+    padding: 50px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: inset 10px 0 30px rgba(0,0,0,0.05);
+}
+
+/* Titre du formulaire */
+.signup-title {
+    font-size: 32px;
+    color: #4b986c;
+    font-weight: 700;
+    margin-bottom: 30px;
+    user-select: none;
+}
+
+/* Formulaire */
+.signup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Inputs */
+.signup-input {
+    padding: 14px 16px;
+    font-size: 16px;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    background: #f9f9f9;
+    color: #333333; /* couleur sombre pour meilleure lisibilité */
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.signup-input:focus {
+    outline: none;
+    border-color: #4b986c;
+    box-shadow: 0 0 8px rgba(75, 152, 108, 0.5);
+}
+
+.signup-input::placeholder {
+    color: #aaa;
+}
+
+/* Container mot de passe avec icône */
+.password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-icon {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666;
+    font-size: 20px;
+}
+
+/* Bouton */
+.signup-button {
+    margin-top: 10px;
+    padding: 14px 0;
+    font-size: 18px;
+    background: #4b986c;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.signup-button:hover {
+    background: rgb(75, 152, 108);
+    box-shadow: 0 0 15px rgb(255, 255, 255);
+}
+
+.signup-button:focus-visible {
+    outline: 2px solid #4b986c;
+    outline-offset: 2px;
+}
+
+/* Message d'erreur / succès */
+.error-message {
+    color: #cc3333;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.success-message {
+    color: #339933;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* Lien connexion */
+.login-link {
+    margin-top: 25px;
+    font-size: 15px;
+    color: #666;
+    user-select: none;
+}
+
+.login-link a {
+    color: #4b986c;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive - passage en colonne */
+@media (max-width: 850px) {
+    .signup-wrapper {
+        flex-direction: column;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 12px 35px rgb(255, 255, 255);
+        border-radius: 16px;
+    }
+
+    .signup-left {
+        padding: 30px 20px;
+        box-shadow: none;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .signup-logo {
+        max-width: 180px;
+        margin-bottom: 15px;
+    }
+
+    .signup-motto {
+        font-size: 22px;
+    }
+
+    .signup-right {
+        padding: 40px 30px;
+        border-radius: 0 0 12px 12px;
+        box-shadow: none;
+    }
+}
