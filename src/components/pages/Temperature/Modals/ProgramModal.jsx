@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import CustomTimePicker from "../CustomTimePicker";
 
-const DAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+const DAYS = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"];
 
 const DaySelector = ({ days, activeDays, toggleDay }) => (
   <div className="day-selector">
@@ -22,9 +22,8 @@ const ProgramModal = ({
   editingProgram,
   setEditingProgram,
   setShowProgramModal,
-  setSchedule,
-  setFilteredSchedule,
   setNotification,
+  refreshPrograms, // ⚡ On attend une fonction du parent pour recharger la liste
 }) => {
   const [selectedDays, setSelectedDays] = useState([]);
   const [dayTimes, setDayTimes] = useState({});
@@ -36,14 +35,14 @@ const ProgramModal = ({
   useEffect(() => {
     if (editingProgram) {
       const daysList = (editingProgram.days || (editingProgram.day ? [editingProgram.day] : []))
-        .filter(Boolean) // On élimine les valeurs undefined/null
-        .map((day) => day.charAt(0).toUpperCase() + day.slice(1));
+        .filter(Boolean)
+        .map((day) => day.toLowerCase());
       setSelectedDays(daysList);
 
       const tempTimes = {};
       if (daysList.length > 0) {
-        tempTimes[daysList[0]] = { start: editingProgram.startTime || "" };
-        tempTimes[daysList[daysList.length - 1]] = { end: editingProgram.endTime || "" };
+        tempTimes[daysList[0]] = { start: editingProgram.start || "" };
+        tempTimes[daysList[daysList.length - 1]] = { end: editingProgram.end || "" };
       }
       setDayTimes(tempTimes);
       setProgramName(editingProgram.name || "");
@@ -88,7 +87,7 @@ const ProgramModal = ({
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const action = e.target.action.value;
     const activeDays = repeatEnabled ? repeatDays : selectedDays;
@@ -100,30 +99,42 @@ const ProgramModal = ({
       return setNotification({ type: "error", message: "Veuillez sélectionner au moins un jour." });
     }
 
-    const newProgram = {
+    const payload = {
       name: programName,
-      days: activeDays,
-      startTime: dayTimes[activeDays[0]]?.start || "",
-      endTime: dayTimes[activeDays[activeDays.length - 1]]?.end || "",
       action,
+      isMultiDay: activeDays.length > 1,
+      days: activeDays,
+      day: activeDays[0],
+      start: dayTimes[activeDays[0]]?.start || "",
+      end: dayTimes[activeDays[activeDays.length - 1]]?.end || "",
     };
 
-    // Ajouter ou modifier dans le state
-    if (editingProgram) {
-      setSchedule((prev) =>
-        prev.map((p) => (p === editingProgram ? newProgram : p))
-      );
-      setFilteredSchedule((prev) =>
-        prev.map((p) => (p === editingProgram ? newProgram : p))
-      );
-      setNotification({ type: "success", message: "Programme modifié !" });
-    } else {
-      setSchedule((prev) => [...prev, newProgram]);
-      setFilteredSchedule((prev) => [...prev, newProgram]);
-      setNotification({ type: "success", message: "Programme ajouté !" });
-    }
+    try {
+      const url = editingProgram
+        ? `http://${process.env.REACT_APP_SERVER_IP}:${process.env.REACT_APP_SERVER_PORT}/air-program/${editingProgram.id}`
+        : `http://${process.env.REACT_APP_SERVER_IP}:${process.env.REACT_APP_SERVER_PORT}/air-program`;
 
-    resetForm();
+      const method = editingProgram ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) throw new Error("Erreur lors de l'enregistrement");
+
+      setNotification({
+        type: "success",
+        message: editingProgram ? "Programme modifié !" : "Programme ajouté !",
+      });
+
+      resetForm();
+      if (refreshPrograms) refreshPrograms(); // ⚡ Recharge depuis la BDD
+    } catch (err) {
+      console.error(err);
+      setNotification({ type: "error", message: err.message || "Erreur serveur." });
+    }
   };
 
   const activeDays = repeatEnabled ? repeatDays : selectedDays;
@@ -185,12 +196,7 @@ const ProgramModal = ({
           {/* Action */}
           <div className="form-section">
             <label>Action :</label>
-            <select
-              name="action"
-              className="select-action"
-              required
-              disabled={editingProgram && repeatEnabled}
-            >
+            <select name="action" className="select-action" required>
               <option value="ventilation">Ventilation</option>
             </select>
           </div>
@@ -227,9 +233,7 @@ const ProgramModal = ({
           <div className="modal-actions">
             <button type="submit" className="custom-btn submit-btn">
               {editingProgram
-                ? repeatEnabled && repeatDays.length > 0
-                  ? `Répéter sur ${repeatDays.length} jours`
-                  : "Enregistrer les modifications"
+                ? "Enregistrer les modifications"
                 : activeDays.length > 1
                 ? `Programmer pour ${activeDays.length} jours`
                 : "Ajouter la programmation"}

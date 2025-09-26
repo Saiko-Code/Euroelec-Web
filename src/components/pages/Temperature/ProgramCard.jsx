@@ -1,14 +1,20 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { FaEye, FaEdit, FaTrash, FaPlay, FaPause } from "react-icons/fa";
 
 // Helper pour afficher correctement les périodes ou jour
 const displayPeriod = (program) => {
   if (program.isMultiDay) {
-    const startDay = program.startDay ? program.startDay.charAt(0).toUpperCase() + program.startDay.slice(1) : "N/A";
-    const endDay = program.endDay ? program.endDay.charAt(0).toUpperCase() + program.endDay.slice(1) : "N/A";
+    const startDay = program.startDay
+      ? program.startDay.charAt(0).toUpperCase() + program.startDay.slice(1)
+      : "N/A";
+    const endDay = program.endDay
+      ? program.endDay.charAt(0).toUpperCase() + program.endDay.slice(1)
+      : "N/A";
     return `${startDay} - ${endDay}`;
   }
-  return program.day ? program.day.charAt(0).toUpperCase() + program.day.slice(1) : "N/A";
+  return program.day
+    ? program.day.charAt(0).toUpperCase() + program.day.slice(1)
+    : "N/A";
 };
 
 // Ligne de détail réutilisable
@@ -27,65 +33,80 @@ const ProgramCard = ({
   setShowAllProgramsModal,
   setNotification,
 }) => {
-  // Récupération des programmes depuis l'API
-  useEffect(() => {
-    const fetchPrograms = async () => {
-      try {
-        const response = await fetch(
-          `http://${process.env.REACT_APP_SERVER_IP}:${process.env.REACT_APP_SERVER_PORT}/air-program`
-        );
-        if (!response.ok) throw new Error("Erreur lors de la récupération des programmes");
-        const data = await response.json();
+  // ⚡ Récupération des programmes depuis l'API
+  const refreshPrograms = useCallback(async () => {
+    try {
+      const response = await fetch(
+        `http://${process.env.REACT_APP_SERVER_IP}:${process.env.REACT_APP_SERVER_PORT}/air-program`
+      );
+      if (!response.ok)
+        throw new Error("Erreur lors de la récupération des programmes");
+      const data = await response.json();
 
-        const allPrograms = [
-          ...(data.data.singleDay || []).map((p, index) => ({
-            id: p.id || `single-${index}`,
-            name: p.name || "N/A",
-            day: p.day || "N/A",
-            start: p.start_time || "00:00",
-            end: p.end_time || "00:00",
-            action: p.action || "N/A",
-            is_active: p.is_active || 0,
-            isMultiDay: false,
-          })),
-          ...(data.data.multiDay || []).map((p, index) => ({
-            id: p.id ? `${p.id}-group` : `multi-${index}`,
-            name: p.name || "N/A",
-            startDay: p.startDay || "N/A",
-            endDay: p.endDay || "N/A",
-            start: p.startTime || "00:00",
-            end: p.endTime || "00:00",
-            action: p.action || "N/A",
-            is_active: p.is_active || 0,
-            isMultiDay: true,
-          })),
-        ];
+      const allPrograms = [
+        ...(data.data.singleDay || []).map((p, index) => ({
+          id: p.id || `single-${index}`,
+          name: p.name || "N/A",
+          day: p.day || "N/A",
+          start: p.start_time || "00:00",
+          end: p.end_time || "00:00",
+          action: p.action || "N/A",
+          is_active: p.is_active || 0,
+          isMultiDay: false,
+        })),
+        ...(data.data.multiDay || []).map((p, index) => ({
+          id: p.id ? `${p.id}-group` : `multi-${index}`,
+          name: p.name || "N/A",
+          startDay: p.startDay || "N/A",
+          endDay: p.endDay || "N/A",
+          start: p.startTime || "00:00",
+          end: p.endTime || "00:00",
+          action: p.action || "N/A",
+          is_active: p.is_active || 0,
+          isMultiDay: true,
+        })),
+      ];
 
-        setSchedule(allPrograms);
-      } catch (err) {
-        console.error(err);
-        setNotification({ type: "error", message: "Impossible de charger les programmes" });
-      }
-    };
-    fetchPrograms();
+      setSchedule(allPrograms);
+    } catch (err) {
+      console.error(err);
+      setNotification({
+        type: "error",
+        message: "Impossible de charger les programmes",
+      });
+    }
   }, [setSchedule, setNotification]);
+
+  // Chargement initial
+  useEffect(() => {
+    refreshPrograms();
+  }, [refreshPrograms]);
 
   // Supprimer un programme
   const deleteProgram = async (programId) => {
-    if (!window.confirm("Êtes-vous sûr de vouloir supprimer cette programmation ?")) return;
+    if (
+      !window.confirm("Êtes-vous sûr de vouloir supprimer cette programmation ?")
+    )
+      return;
     try {
       const response = await fetch(
         `http://${process.env.REACT_APP_SERVER_IP}:${process.env.REACT_APP_SERVER_PORT}/air-program/${programId}`,
         { method: "DELETE" }
       );
-      if (!response.ok) throw new Error("Erreur lors de la suppression de la programmation");
+      if (!response.ok)
+        throw new Error("Erreur lors de la suppression de la programmation");
 
-      const ids = String(programId).split("-");
-      setSchedule((prev) => prev.filter((p) => !ids.includes(String(p.id))));
-      setNotification({ type: "success", message: "Programmation supprimée avec succès." });
+      setNotification({
+        type: "success",
+        message: "Programmation supprimée avec succès.",
+      });
+      refreshPrograms(); // ⚡ recharge depuis la BDD
     } catch (err) {
       console.error(err);
-      setNotification({ type: "error", message: err.message || "Erreur lors de la suppression." });
+      setNotification({
+        type: "error",
+        message: err.message || "Erreur lors de la suppression.",
+      });
     }
   };
 
@@ -101,15 +122,20 @@ const ProgramCard = ({
           body: JSON.stringify({ is_active: newStatus }),
         }
       );
-      if (!response.ok) throw new Error("Erreur lors de la modification du statut");
+      if (!response.ok)
+        throw new Error("Erreur lors de la modification du statut");
 
-      setSchedule((prev) =>
-        prev.map((p) => (p.id === program.id ? { ...p, is_active: newStatus } : p))
-      );
-      setNotification({ type: "success", message: `Programme ${newStatus ? "activé" : "désactivé"}.` });
+      setNotification({
+        type: "success",
+        message: `Programme ${newStatus ? "activé" : "désactivé"}.`,
+      });
+      refreshPrograms(); // ⚡ recharge la liste après modif
     } catch (err) {
       console.error(err);
-      setNotification({ type: "error", message: err.message || "Erreur lors de la modification du programme." });
+      setNotification({
+        type: "error",
+        message: err.message || "Erreur lors de la modification du programme.",
+      });
     }
   };
 
@@ -119,8 +145,10 @@ const ProgramCard = ({
     const now = new Date();
     const [startH, startM] = (program.start || "00:00").split(":").map(Number);
     const [endH, endM] = (program.end || "00:00").split(":").map(Number);
-    const start = new Date(); start.setHours(startH, startM, 0, 0);
-    const end = new Date(); end.setHours(endH, endM, 0, 0);
+    const start = new Date();
+    start.setHours(startH, startM, 0, 0);
+    const end = new Date();
+    end.setHours(endH, endM, 0, 0);
     if (now <= start) return 0;
     if (now >= end) return 100;
     return ((now - start) / (end - start)) * 100;
@@ -132,23 +160,53 @@ const ProgramCard = ({
   return (
     <div className="programm-card">
       <div className="card-schedule custom-card">
-        <div className="custom-card-header green">Programmation ventilation</div>
+        <div className="custom-card-header green">
+          Programmation ventilation
+        </div>
         <div className="custom-card-body">
-
           {/* Programme en cours */}
           <div className="current-program-container">
             <h3 className="program-section-title">Programme en cours</h3>
             {activeProgram ? (
               <div className="program-active">
                 <div className="program-header">
-                  <h4>{activeProgram.name} - {activeProgram.action}</h4>
+                  <h4>
+                    {activeProgram.name} - {activeProgram.action}
+                  </h4>
                   <span className="program-status active">ACTIF</span>
+                  <div className="program-item-actions">
+                    <button onClick={() => toggleProgram(activeProgram)}>
+                      {activeProgram.is_active ? <FaPause /> : <FaPlay />}
+                    </button>
+                    <button onClick={() => deleteProgram(activeProgram.id)}>
+                      <FaTrash />
+                    </button>
+                  </div>
                 </div>
                 <div className="program-details">
-                  <ProgramDetailRow label="Jour:" value={displayPeriod(activeProgram)} />
-                  <ProgramDetailRow label="Heure:" value={`${activeProgram.start} - ${activeProgram.end}`} />
+                  <ProgramDetailRow
+                    label="Jour:"
+                    value={displayPeriod(activeProgram)}
+                  />
+                  <ProgramDetailRow
+                    label="Heure:"
+                    value={`${activeProgram.start} - ${activeProgram.end}`}
+                  />
+
+                  {/* Progression avec pourcentage */}
                   <div className="progress-container">
-                    <div className="progress-bar" style={{ width: `${computeProgress(activeProgram)}%` }} />
+                    <div className="progress-header">
+                      Progression :{" "}
+                      {Math.round(computeProgress(activeProgram))}%
+                    </div>
+                    <div className="progress-bar-wrapper">
+                      <div
+                        className="progress-bar"
+                        style={{
+                          width: `${computeProgress(activeProgram)}%`,
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -159,25 +217,58 @@ const ProgramCard = ({
 
           {/* Programmes créés */}
           <div className="recent-programs-container">
-            <div className="recent-programs-title">Programmes créés ({otherPrograms.length})</div>
+            <div className="recent-programs-title">
+              Programmes créés ({otherPrograms.length})
+            </div>
             {otherPrograms.length > 0 ? (
               <div className="recent-programs-list">
                 {otherPrograms.map((program, index) => (
-                  <div key={program.id || `program-${index}`} className="recent-program-item">
+                  <div
+                    key={program.id || `program-${index}`}
+                    className="recent-program-item"
+                  >
                     <div className="program-item-header">
                       <h4>{displayPeriod(program)}</h4>
                       <div className="program-item-actions">
-                        <button onClick={() => { setEditingProgram(program); setShowProgramModal(true); }}><FaEdit /></button>
-                        <button onClick={() => deleteProgram(program.id)}><FaTrash /></button>
-                        <button onClick={() => toggleProgram(program)}>{program.is_active ? <FaPause /> : <FaPlay />}</button>
+                        <button
+                          onClick={() => {
+                            setEditingProgram(program);
+                            setShowProgramModal(true);
+                          }}
+                        >
+                          <FaEdit />
+                        </button>
+                        <button onClick={() => deleteProgram(program.id)}>
+                          <FaTrash />
+                        </button>
+                        <button onClick={() => toggleProgram(program)}>
+                          {program.is_active ? <FaPause /> : <FaPlay />}
+                        </button>
                       </div>
                     </div>
                     <div className="program-item-details">
-                      <ProgramDetailRow label="Nom:" value={program.name || "N/A"} />
-                      <ProgramDetailRow label="Jour:" value={displayPeriod(program)} />
-                      <ProgramDetailRow label="Heure:" value={`${program.start || "00:00"} - ${program.end || "00:00"}`} />
-                      <ProgramDetailRow label="Action:" value={program.action || "N/A"} />
-                      <ProgramDetailRow label="État:" value={program.is_active ? "ACTIF" : "INACTIF"} />
+                      <ProgramDetailRow
+                        label="Nom:"
+                        value={program.name || "N/A"}
+                      />
+                      <ProgramDetailRow
+                        label="Jour:"
+                        value={displayPeriod(program)}
+                      />
+                      <ProgramDetailRow
+                        label="Heure:"
+                        value={`${program.start || "00:00"} - ${
+                          program.end || "00:00"
+                        }`}
+                      />
+                      <ProgramDetailRow
+                        label="Action:"
+                        value={program.action || "N/A"}
+                      />
+                      <ProgramDetailRow
+                        label="État:"
+                        value={program.is_active ? "ACTIF" : "INACTIF"}
+                      />
                     </div>
                   </div>
                 ))}
@@ -191,17 +282,22 @@ const ProgramCard = ({
           <div className="program-actions-container">
             <button
               className="custom-btn blue add-program-btn"
-              onClick={() => { setShowProgramModal(true); setEditingProgram(null); }}
+              onClick={() => {
+                setShowProgramModal(true);
+                setEditingProgram(null);
+              }}
             >
               Ajouter un programme
             </button>
             {schedule.length > 2 && (
-              <button className="custom-btn green view-all-btn" onClick={() => setShowAllProgramsModal(true)}>
+              <button
+                className="custom-btn green view-all-btn"
+                onClick={() => setShowAllProgramsModal(true)}
+              >
                 <FaEye /> Voir tous les programmes ({schedule.length})
               </button>
             )}
           </div>
-
         </div>
       </div>
     </div>

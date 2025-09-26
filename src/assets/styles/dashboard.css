@@ -12,6 +12,10 @@
       --border-radius: 30px;
       --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       --transition: all 0.3s ease;
+      --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.05);
+      --shadow-medium: 0 8px 20px rgba(0, 0, 0, 0.08);
+      --shadow-hover: 0 12px 30px rgba(74, 144, 119, 0.15);
+      --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     /* ======================================a======= */
@@ -595,44 +599,46 @@
     }
 
     /* ============================================= */
-    /* CARTE DE PROGRAMMATION - DESIGN AMÉLIORÉ       */
+    /* CARTE DE PROGRAMMATION - DESIGN MODERNE       */
     /* ============================================= */
 
     .current-program-container {
-      margin-bottom: 24px;
-      padding: 18px;
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(245, 255, 250, 0.85));
+      margin-bottom: 32px;
+      padding: 24px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(240, 255, 245, 0.95));
       border-radius: var(--border-radius);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
-      border: 1px solid rgba(74, 144, 119, 0.15);
-      backdrop-filter: blur(6px);
+      box-shadow: var(--shadow-medium);
+      border: 1px solid rgba(74, 144, 119, 0.2);
+      backdrop-filter: blur(8px);
     }
 
     .program-section-title {
-      font-size: 18px;
-      font-weight: 700;
+      font-size: 22px;
+      font-weight: 800;
       color: var(--primary-color);
-      margin-bottom: 16px;
-      padding-bottom: 10px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
       border-bottom: 2px solid rgba(74, 144, 119, 0.25);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     .program-section-title::before {
       content: "⏳";
-      font-size: 20px;
+      font-size: 24px;
     }
 
+    /* Carte du programme actif */
     .program-active {
-      padding: 16px;
+      padding: 20px;
       border-radius: var(--border-radius);
       background: linear-gradient(145deg, rgba(74, 144, 119, 0.08), rgba(74, 144, 119, 0.15));
-      box-shadow: 0 6px 14px rgba(74, 144, 119, 0.15);
+      box-shadow: var(--shadow-light);
       border: 1px solid rgba(74, 144, 119, 0.25);
       position: relative;
       overflow: hidden;
+      transition: var(--transition-smooth);
     }
 
     .program-active::before {
@@ -640,30 +646,31 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 5px;
+      width: 6px;
       height: 100%;
       background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
     }
 
-    .program-header {
+    /* En-tête */
+    .program-active .program-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
-    .program-header h4 {
-      font-size: 16px;
+    .program-active .program-header h4 {
+      font-size: 18px;
       font-weight: 700;
       color: var(--dark-color);
       margin: 0;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     .program-status {
-      padding: 6px 14px;
+      padding: 6px 16px;
       border-radius: 20px;
       font-size: 12px;
       font-weight: 700;
@@ -676,98 +683,118 @@
       color: #fff;
     }
 
-    .program-status.upcoming {
-      background: var(--info-color);
-      color: #fff;
-    }
-
-    .program-status.none {
-      background: var(--danger-color);
-      color: #fff;
-    }
-
-    .program-details {
+    /* Détails */
+    .program-active .program-details {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
 
-    .program-detail-item {
+    .program-active .program-detail-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 6px 0;
-      font-size: 14px;
+      font-size: 15px;
     }
 
-    .detail-label {
+    .program-active .detail-label {
       color: #6b7280;
       font-weight: 500;
     }
 
-    .detail-value {
+    .program-active .detail-value {
       color: var(--dark-color);
       font-weight: 600;
     }
 
+    /* Progression */
     .progress-container {
-      width: 100%;
-      height: 12px;
+      margin-top: 16px;
+      position: relative;
+      height: 20px;
       background: rgba(74, 144, 119, 0.15);
-      border-radius: 6px;
-      margin-top: 14px;
+      border-radius: 10px;
       overflow: hidden;
     }
 
     .progress-bar {
       height: 100%;
       background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-      border-radius: 6px;
+      border-radius: 10px;
       transition: width 0.5s ease;
     }
 
-    /* Liste programmes récents */
+    .progress-percentage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    }
+
+    /* ------------------- PROGRAMMES RÉCENTS ------------------- */
     .recent-programs-container {
-      margin-bottom: 24px;
+      margin-bottom: 32px;
     }
 
     .recent-programs-title {
-
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 700;
       color: var(--primary-color);
-      margin-bottom: 12px;
+      margin-bottom: 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
     .recent-programs-list {
-      width: 100%;
       display: flex;
-      flex-direction: column;
-      gap: 12px;
-      max-height: 260px;
+      flex-direction: row;
+      gap: 14px;
+      max-height: 250px;
       overflow-y: auto;
       padding-right: 6px;
+
     }
 
+    /* Scrollbar custom */
+    .recent-programs-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .recent-programs-list::-webkit-scrollbar-thumb {
+      background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+      border-radius: 6px;
+    }
+
+    .recent-programs-list::-webkit-scrollbar-track {
+      background: rgba(74, 144, 119, 0.1);
+      border-radius: 6px;
+    }
+
+    /* Carte programme récent */
     .recent-program-item {
-      padding: 14px;
+      padding: 16px;
       background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+      border-radius: 14px;
+      box-shadow: var(--shadow-light);
       border: 1px solid rgba(74, 144, 119, 0.15);
-      transition: all 0.25s ease;
+      transition: var(--transition-smooth);
+      max-width: 280px;
+
     }
 
     .recent-program-item:hover {
       transform: translateY(-3px);
-      box-shadow: 0 6px 14px rgba(74, 144, 119, 0.18);
+      box-shadow: var(--shadow-hover);
     }
 
-    .program-item-header h4 {
-      font-size: 14px;
+    .recent-program-item .program-item-header h4 {
+      font-size: 15px;
       font-weight: 700;
       color: var(--primary-color);
       display: flex;
@@ -775,40 +802,63 @@
       gap: 6px;
     }
 
-    .program-item-header h4::before {
+    .recent-program-item .program-item-header h4::before {
       content: "📌";
       font-size: 14px;
     }
 
-    .program-item-details {
+    .recent-program-item .program-item-details {
       display: flex;
-      align-items: self-start;
       flex-direction: column;
       gap: 6px;
       margin-top: 8px;
+      align-items: flex-start;
     }
 
-    .program-detail-row {
-      display: flex;
-      gap: 12px;
-      font-size: 13px;
-      color: #444;
+    .recent-program-item .program-detail-row {
+      font-size: 14px;
+      font-weight: 500;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    /* Boutons */
+    /* Actions */
+    .program-item-actions button {
+      border: none;
+      background: transparent;
+      color: var(--primary-color);
+      font-size: 15px;
+      cursor: pointer;
+      margin-left: 6px;
+      transition: transform 0.2s, color 0.2s;
+    }
+
+    .program-item-actions button:hover {
+      color: var(--secondary-color);
+      transform: scale(1.15);
+    }
+
+    /* Boutons principaux */
     .add-program-btn,
     .view-all-btn {
       border-radius: var(--border-radius);
       font-size: 14px;
       font-weight: 600;
       margin-right: 10px;
-      align-content: center;
-      transition: all 0.3s ease;
+      padding: 10px 18px;
+      transition: var(--transition-smooth);
+    }
+
+    .add-program-btn {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: #fff;
+      border: none;
+      box-shadow: var(--shadow-light);
     }
 
     .add-program-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 14px rgba(74, 144, 119, 0.35);
+      box-shadow: var(--shadow-hover);
     }
 
     .view-all-btn {
@@ -827,11 +877,11 @@
     /* Message aucun programme */
     .no-programs {
       text-align: center;
-      padding: 22px;
+      padding: 24px;
       color: #6b7280;
       font-style: italic;
       background: #f9fafb;
-      border-radius: 12px;
+      border-radius: 14px;
       border: 1px dashed rgba(74, 144, 119, 0.25);
     }
 
