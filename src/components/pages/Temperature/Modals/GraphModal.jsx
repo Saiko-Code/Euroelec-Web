@@ -1,5 +1,16 @@
-import React from "react";
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, Legend } from "recharts";
+import React, { useMemo } from "react";
+import {
+  LineChart,
+  Line,
+  Bar,
+  ComposedChart,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 import { prepareChartData } from "../../../../utils/prepareChartData";
 
 const colors = [
@@ -15,31 +26,123 @@ const colors = [
   "rgba(243, 94, 193, 0.8)",
 ];
 
+const toInputDate = (value) => {
+  if (!value) return "";
+  const d = new Date(value);
+  return isNaN(d) ? "" : d.toISOString().split("T")[0];
+};
+
 const GraphModal = ({
   isSingleDate,
-  sensorsList,
-  sensorVisibility,
+  selectedSingleDate,
+  setSelectedSingleDate,
+  selectedStartDate,
+  setSelectedStartDate,
+  selectedEndDate,
+  setSelectedEndDate,
+  sensorsList = [],
+  sensorVisibility = {},
   toggleSensorVisibility,
-  tempsToDisplay,
+  tempsToDisplay = [],
   setShowGraphModal,
 }) => {
+  // Nettoyage et formatage des données
+  const chartData = useMemo(() => {
+    const baseData = prepareChartData(tempsToDisplay, isSingleDate) || [];
+    // Convertir en valeurs numériques et filtrer les NaN
+    return baseData.map((row) => {
+      const cleaned = {};
+      Object.entries(row).forEach(([key, value]) => {
+        cleaned[key] =
+          typeof value === "number"
+            ? value
+            : !isNaN(parseFloat(value))
+            ? parseFloat(value)
+            : null;
+      });
+      return cleaned;
+    });
+  }, [tempsToDisplay, isSingleDate]);
+
   return (
     <div className="modal-overlay graph-modal">
-      <div className="modal-content graph-modal-content" style={{ height: "70vh" }}>
-        <div className="modal-header">
-          <h3>Graphique en grand</h3>
-          <button className="close-modal" onClick={() => setShowGraphModal(false)}>
+      <div
+        className="modal-content graph-modal-content"
+        style={{ height: "75vh", width: "90vw" }}
+      >
+        {/* === HEADER AVEC SÉLECTEUR DE DATE === */}
+        <div
+          className="modal-header"
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "10px",
+            padding: "10px 20px",
+          }}
+        >
+          <h3 style={{ margin: 0 }}>Graphique en grand</h3>
+
+          <div
+            className="date-selector"
+            style={{ display: "flex", gap: "10px", alignItems: "center" }}
+          >
+            {isSingleDate ? (
+              <>
+                <label>Date :</label>
+                <input
+                  type="date"
+                  value={toInputDate(selectedSingleDate)}
+                  onChange={(e) => setSelectedSingleDate(e.target.value)}
+                />
+              </>
+            ) : (
+              <>
+                <label>Du :</label>
+                <input
+                  type="date"
+                  value={toInputDate(selectedStartDate)}
+                  onChange={(e) => setSelectedStartDate(e.target.value)}
+                />
+                <label>au :</label>
+                <input
+                  type="date"
+                  value={toInputDate(selectedEndDate)}
+                  onChange={(e) => setSelectedEndDate(e.target.value)}
+                />
+              </>
+            )}
+          </div>
+
+          <button
+            className="close-modal"
+            onClick={() => setShowGraphModal(false)}
+            style={{
+              background: "none",
+              border: "none",
+              fontSize: "24px",
+              cursor: "pointer",
+              color: "#666",
+            }}
+          >
             ×
           </button>
         </div>
+
+        {/* === CONTROLES DES CAPTEURS === */}
         <div className="chart-controls">
           <div className="sensor-visibility-controls">
-            <span className="sensor-visibility-label">Sélectionnez les capteurs à afficher :</span>
+            <span className="sensor-visibility-label">
+              Sélectionnez les capteurs :
+            </span>
             <div className="sensor-buttons-container">
               {sensorsList.map((sensor) => (
                 <button
                   key={sensor}
-                  className={`sensor-toggle-btn ${sensorVisibility[sensor] ? "active" : ""}`}
+                  className={`sensor-toggle-btn ${
+                    sensorVisibility[sensor] ? "active" : ""
+                  }`}
                   onClick={() => toggleSensorVisibility(sensor)}
                 >
                   {sensor}
@@ -48,76 +151,107 @@ const GraphModal = ({
             </div>
           </div>
         </div>
-        <div className="modal-body" style={{ height: "60vh", width: "85vw" }}>
+
+        {/* === GRAPHIQUE === */}
+        <div className="modal-body" style={{ flex: 1, minHeight: "60vh" }}>
           <ResponsiveContainer width="100%" height="100%">
             {isSingleDate ? (
-              <LineChart data={prepareChartData(tempsToDisplay, isSingleDate)} margin={{ top: 10, right: 30, left: 20, bottom: 60 }}>
+              <LineChart
+                data={chartData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis
                   dataKey="heure"
-                  label={{ value: "Heure", position: "insideBottom", offset: -5 }}
                   angle={-30}
                   textAnchor="end"
-                  height={20}
+                  height={40}
                   tick={{ fontSize: 12 }}
                 />
                 <YAxis
                   domain={["auto", "auto"]}
-                  label={{ value: "Température (°C)", angle: -90, position: "insideLeft" }}
+                  label={{
+                    value: "Température (°C)",
+                    angle: -90,
+                    position: "insideLeft",
+                  }}
                   tick={{ fontSize: 12 }}
                 />
                 <Tooltip />
                 <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: "14px" }} />
+
                 {Object.entries(sensorVisibility)
-                  .filter(([_, isVisible]) => isVisible)
-                  .map(([sensor, _], idx) => (
+                  .filter(([_, visible]) => visible)
+                  .map(([sensor], idx) => (
                     <Line
                       key={sensor}
                       type="monotone"
                       dataKey={sensor}
                       name={sensor}
                       stroke={colors[idx % colors.length]}
-                      dot={false}
+                      dot={{ r: 3 }}
+                      activeDot={{ r: 6 }}
+                      strokeWidth={2}
+                      connectNulls
+                      isAnimationActive={false}
                     />
                   ))}
-                <Line type="monotone" dataKey="exterior" name="Extérieur" stroke="#FF0000" strokeWidth={2} dot={false} />
+
+                {/* Courbe extérieure si disponible */}
+                {chartData[0]?.exterior !== undefined && (
+                  <Line
+                    type="monotone"
+                    dataKey="exterior"
+                    name="Extérieur"
+                    stroke="#FF0000"
+                    strokeWidth={2}
+                    dot={false}
+                    connectNulls
+                  />
+                )}
               </LineChart>
             ) : (
-              <BarChart data={prepareChartData(tempsToDisplay, isSingleDate)} margin={{ top: 10, right: 30, left: 20, bottom: 60 }}>
+              <ComposedChart
+                data={chartData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis
                   dataKey="time"
-                  label={{ value: "Date", position: "insideBottom", offset: -5 }}
                   angle={-30}
                   textAnchor="end"
                   height={50}
-                  tickFormatter={(tick) => {
-                    const date = new Date(tick);
-                    return date.toLocaleDateString("fr-FR", { day: "2-digit", month: "short" });
-                  }}
-                  tick={{ fontSize: 12 }}
-                  interval="preserveStartEnd"
+                  tickFormatter={(tick) =>
+                    new Date(tick).toLocaleDateString("fr-FR", {
+                      day: "2-digit",
+                      month: "short",
+                    })
+                  }
                 />
                 <YAxis
                   domain={["auto", "auto"]}
-                  label={{ value: "Température (°C)", angle: -90, position: "insideLeft" }}
-                  tick={{ fontSize: 12 }}
+                  label={{
+                    value: "Température (°C)",
+                    angle: -90,
+                    position: "insideLeft",
+                  }}
                 />
                 <Tooltip />
                 <Legend verticalAlign="top" height={30} wrapperStyle={{ fontSize: "14px" }} />
+
                 {Object.entries(sensorVisibility)
-                  .filter(([_, isVisible]) => isVisible)
-                  .map(([sensor, _], idx) => (
+                  .filter(([_, visible]) => visible)
+                  .map(([sensor], idx) => (
                     <Bar
                       key={sensor}
                       dataKey={sensor}
                       name={sensor}
                       fill={colors[idx % colors.length]}
                       barSize={20}
+                      isAnimationActive={false}
                     />
                   ))}
-                <Line dataKey="exterior" name="Extérieur" stroke="#FF0000" strokeWidth={2.5} dot={false} />
-              </BarChart>
+              </ComposedChart>
             )}
           </ResponsiveContainer>
         </div>

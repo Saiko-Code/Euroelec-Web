@@ -1,0 +1,336 @@
+/* ============================================= */
+    /* CARTE DE PROGRAMMATION - DESIGN AMÉLIORÉE     */
+    /* ============================================= */
+
+    .current-program-container {
+      margin-bottom: 32px;
+      padding: 20px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.97), rgba(240, 255, 245, 0.97));
+      border-radius: var(--border-radius);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(74, 144, 119, 0.25);
+      backdrop-filter: blur(8px);
+      position: relative;
+      overflow-y: auto;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    /* Animation subtile au hover */
+    .current-program-container:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Bande colorée sur le côté */
+    .current-program-container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 6px;
+      height: 100%;
+      background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+      border-radius: var(--border-radius) 0 0 var(--border-radius);
+    }
+
+    /* Titre section */
+    .program-section-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary-color);
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid rgba(74, 144, 119, 0.25);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .program-section-title::before {
+      content: "⏳";
+      font-size: 22px;
+    }
+
+    /* En-tête */
+    .current-program-container .program-header {
+      display: flex;
+      justify-content: space-between;
+      /* titre à gauche, boutons à droite */
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .program-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      /* espace entre titre et badge */
+    }
+
+    .current-program-container .program-header h4 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--dark-color);
+      margin: 0;
+    }
+
+    .program-active {
+      margin-bottom: 5px;
+    }
+
+    /* Badge statut */
+    .program-status {
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+      letter-spacing: 0.5px;
+    }
+
+    .program-status.active {
+      background: var(--success-color);
+      color: #fff;
+    }
+
+    /* Zone des boutons */
+    .program-item-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* Détails */
+    .current-program-container .program-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .current-program-container .program-detail-row {
+      display: flex;
+      justify-content: flex-start;
+      font-size: 15px;
+      gap: 15px;
+      /* espace entre label et valeur */
+    }
+
+    .current-program-container .detail-label {
+      color: #6b7280;
+      font-weight: 500;
+      min-width: 50px;
+      /* assure un alignement uniforme */
+    }
+
+    .current-program-container .detail-value {
+      color: var(--dark-color);
+      font-weight: 600;
+    }
+
+    /* Progression */
+    .progress-container {
+      margin-top: 10px;
+      position: relative;
+      height: 26px;
+      /* plus épaisse */
+      background: rgba(74, 144, 119, 0.15);
+      border-radius: 13px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      border-radius: 13px;
+      transition: width 0.5s ease;
+    }
+
+    .progress-percentage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+      pointer-events: none;
+    }
+
+    /* Actions générales */
+    .program-actions-container {
+      margin-top: 14px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+
+    /* ------------------- PROGRAMMES RÉCENTS ------------------- */
+    .recent-programs-container {
+      margin-bottom: 32px;
+    }
+
+    .recent-programs-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--dark-color);
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .recent-programs-list {
+      display: flex;
+      flex-direction: row;
+      gap: 15px;
+      max-height: 250px;
+      overflow-y: auto;
+      padding-right: 5px;
+      padding-bottom: 10px;
+
+    }
+
+    /* Scrollbar custom */
+    .recent-programs-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .recent-programs-list::-webkit-scrollbar-thumb {
+      background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+      border-radius: 6px;
+    }
+
+    .recent-programs-list::-webkit-scrollbar-track {
+      background: rgba(74, 144, 119, 0.1);
+      border-radius: 6px;
+    }
+
+    /* Carte programme récent */
+    .recent-program-item {
+      padding: 16px;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: var(--shadow-light);
+      border: 1px solid rgba(74, 144, 119, 0.15);
+      transition: var(--transition-smooth);
+      max-width: 280px;
+
+    }
+
+    .recent-program-item:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .recent-program-item .program-item-header h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .recent-program-item .program-item-header h4::before {
+      content: "📌";
+      font-size: 14px;
+    }
+
+    .recent-program-item .program-item-details {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-top: 8px;
+      align-items: flex-start;
+    }
+
+    .recent-program-item .program-detail-row {
+      font-size: 14px;
+      font-weight: 500;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px
+    }
+
+    /* Actions */
+    .program-item-actions button {
+      border: none;
+      background: transparent;
+      color: var(--primary-color);
+      font-size: 15px;
+      cursor: pointer;
+      margin-left: 6px;
+      transition: transform 0.2s, color 0.2s;
+    }
+
+    .program-item-actions button:hover {
+      color: var(--secondary-color);
+      transform: scale(1.15);
+    }
+
+    /* Boutons principaux */
+    .add-program-btn,
+    .view-all-btn {
+      box-sizing: border-box;
+      /* inclut les bordures dans la taille */
+      border-radius: var(--border-radius);
+      font-size: 14px;
+      font-weight: 600;
+      margin-right: 10px;
+      padding: 10px 18px;
+      transition: var(--transition-smooth);
+      border: 2px solid transparent;
+      /* <- bordure identique pour les deux */
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      /* centre verticalement le texte */
+      justify-content: center;
+      /* centre horizontalement */
+    }
+
+    /* Bouton "Ajouter un programme" */
+    .add-program-btn {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: #fff;
+      box-shadow: var(--shadow-light);
+    }
+
+    .add-program-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    /* Bouton "Voir tout" */
+    .view-all-btn {
+      background: transparent;
+      border-color: var(--primary-color);
+      /* change juste la couleur de la bordure */
+      color: var(--primary-color);
+    }
+
+    .view-all-btn:hover {
+      background: var(--primary-color);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(74, 144, 119, 0.25);
+    }
+
+
+    /* Message aucun programme */
+    .no-programs {
+      text-align: center;
+      padding: 24px;
+      color: #6b7280;
+      font-style: italic;
+      background: #f9fafb;
+      border-radius: 14px;
+      border: 1px dashed rgba(74, 144, 119, 0.25);
+    }
+
+
+    

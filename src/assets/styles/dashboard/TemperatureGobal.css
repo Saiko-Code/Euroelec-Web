@@ -1,0 +1,227 @@
+/* ============================================= */
+/* VARIABLES & BASE                              */
+/* ============================================= */
+:root {
+  --gradient-warning: linear-gradient(135deg, #ffab10b7 0%, #ff8800 100%);
+  --gradient-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.12);
+  --radius-lg: 20px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+}
+
+/* ============================================= */
+/* STATS WIDGET CARD                             */
+/* ============================================= */
+.stats-widget-card {
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Cadre d'avertissement orange sur toute la card */
+.stats-widget-card .custom-card.card-warning {
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+  animation: pulse-warning 1.5s ease-in-out infinite;
+  background: linear-gradient(to bottom, #fffbeb, white);
+}
+
+/* Animation pulse du cadre */
+@keyframes pulse-warning {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(245, 158, 11, 0.4); }
+  50% { transform: scale(1.02); box-shadow: 0 0 40px rgba(245, 158, 11, 0.7); }
+}
+
+.custom-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+
+/* Barre en haut de la card */
+.custom-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.custom-card:hover::before {
+  opacity: 1;
+}
+
+.custom-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+  border-color: rgba(102, 126, 234, 0.2);
+}
+
+/* Gradient pour alert warning */
+.card-warning .custom-card::before {
+  background: var(--gradient-warning);
+  opacity: 1;
+}
+
+/* ============================================= */
+/* CARD HEADER                                   */
+/* ============================================= */
+.custom-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background: var(--gradient-primary);
+  color: white;
+  font-weight: 600;
+  font-size: 17px;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-warning .custom-card-header {
+  background: var(--gradient-warning);
+}
+
+.sensor-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.25);
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 600;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.sensor-badge:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(1.05);
+}
+
+/* ============================================= */
+/* CARD BODY                                     */
+/* ============================================= */
+.custom-card-body {
+  padding: 24px;
+}
+
+/* ============================================= */
+/* STATS GRID                                    */
+/* ============================================= */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-item {
+  position: relative;
+  text-align: center;
+  padding: 20px 16px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+/* Tooltip interne */
+.stat-item::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.stat-item:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-12px);
+}
+
+.stat-desc {
+  font-size: 12px;
+  color: #64748b; /* gris clair */
+  line-height: 1.3;
+  margin-top: 4px;
+}
+
+
+/* ============================================= */
+/* ALERTES TEMPERATURE INTERIEURE > EXTERIEURE  */
+/* ============================================= */
+.alert-item {
+  display: flex;
+  font-weight: 600;
+  font-size: 16px;
+  color: red;
+  margin-top: 12px;
+}
+
+.outdoor-section {
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  border: 1px solid rgba(14, 165, 233, 0.2);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin-top: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.outdoor-section span {
+  font-weight: 600;
+  color: #1e3a8a;
+}
+
+.outdoor-section span.pulse {
+  animation: pulseText 1.5s infinite;
+}
+
+@keyframes pulseText {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* ============================================= */
+/* RESPONSIVE                                    */
+/* ============================================= */
+@media (max-width: 768px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .custom-card-header { font-size: 15px; flex-wrap: wrap; padding: 18px 20px; }
+  .sensor-badge { font-size: 12px; padding: 5px 12px; }
+  .custom-card-body { padding: 20px; }
+  .stat-value { font-size: 28px; }
+}
+
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr; }
+  .custom-card-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .stat-value { font-size: 24px; }
+  .custom-card-body { padding: 16px; }
+}

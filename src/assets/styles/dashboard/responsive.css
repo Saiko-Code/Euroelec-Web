@@ -1,0 +1,259 @@
+/* ============================================= */
+/* RESPONSIVE - MOBILE                          */
+/* ============================================= */
+@media (max-width: 1000px) {
+  html, body {
+    touch-action: manipulation;
+    overscroll-behavior: contain;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  body {
+    touch-action: pan-x pan-y;
+    overscroll-behavior-y: contain;
+  }
+
+  input, select, textarea, button, canvas {
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  /* Container principal */
+  .temperature-container {
+    padding: 12px !important;
+    margin-left: 0 !important;
+    min-height: auto !important;
+  }
+
+  .section-title {
+    font-size: 22px !important;
+    margin-top: 10px !important;
+    margin-bottom: 18px !important;
+  }
+
+  .cards-container {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    margin: 0 !important;
+  }
+
+  .bottom-section {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    margin-top: 18px !important;
+  }
+
+  /* Cards */
+  .programm-card,
+  .card-temp,
+  .card-download,
+  .group-card,
+  .graph-card,
+  .temp-card,
+  .custom-card {
+    grid-column: auto !important;
+    grid-row: auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin-bottom: 16px !important;
+    height: auto !important;
+  }
+
+  .custom-card-header,
+  .custom-card-header-graph {
+    padding: 10px 12px !important;
+    font-size: 16px !important;
+  }
+
+  .programm-card .custom-card-body,
+  .card-temp .custom-card-body,
+  .group-card .custom-card-body,
+  .graph-card .custom-card-body,
+  .temp-card .custom-card-body,
+  .card-download .custom-card-body {
+    padding: 12px !important;
+    overflow-y: visible !important;
+    min-height: 0 !important;
+  }
+
+  /* Boutons */
+  .open-sidebar-btn {
+    display: block !important;
+    position: fixed !important;
+    top: 16px !important;
+    left: 16px !important;
+    z-index: 1200 !important;
+    background: var(--primary-color) !important;
+    color: #ff0000 !important;
+    border: none !important;
+    border-radius: 50% !important;
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 22px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
+    cursor: pointer !important;
+    transition: background 0.2s !important;
+  }
+
+  .open-sidebar-btn:hover {
+    background: var(--secondary-color) !important;
+  }
+
+  .add-program-btn,
+  .view-all-btn,
+  .download-btn {
+    width: 100% !important;
+    margin-right: 0 !important;
+    margin-bottom: 10px !important;
+    padding: 10px 0 !important;
+    font-size: 15px !important;
+  }
+
+  /* Tables */
+  .scrollable-table-wrapper {
+    max-height: 320px !important;
+  }
+
+  .custom-table th,
+  .custom-table td {
+    padding: 10px 8px !important;
+    font-size: 13px !important;
+  }
+
+  /* Form / Inputs */
+  .form-section,
+  .form-section-list {
+    padding: 10px !important;
+  }
+
+  .date-input-group {
+    min-width: 120px !important;
+    gap: 4px !important;
+  }
+
+  .date-input-group input[type="date"] {
+    padding: 10px 8px !important;
+    font-size: 13px !important;
+    border-radius: 8px !important;
+  }
+
+  .date-selector-container,
+  .single-date-field,
+  .date-range-container,
+  .date-range-fields {
+    flex-direction: column !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .date-input-container label {
+    font-size: 13px !important;
+  }
+
+  .date-input {
+    font-size: 13px !important;
+    padding: 8px !important;
+    border-radius: 8px !important;
+  }
+
+  /* Program list */
+  .recent-programs-list {
+    flex-direction: column !important;
+    gap: 10px !important;
+    max-height: 350px !important;
+    padding-right: 0 !important;
+  }
+
+  .recent-program-item {
+    max-width: 100% !important;
+    padding: 12px !important;
+  }
+
+  .current-program-container {
+    padding: 12px !important;
+    max-height: none !important;
+  }
+
+  /* Charts */
+  .card-temp {
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    padding: 0 !important;
+  }
+
+  .custom-card-body.chart-container {
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+  }
+
+  .chart-wrapper {
+    width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+    touch-action: pan-y !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .chart-container,
+  .chart-wrapper,
+  canvas {
+    touch-action: none !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -webkit-touch-callout: none !important;
+    pointer-events: auto !important;
+  }
+
+  .chart-legend {
+    order: 2 !important;
+    margin-top: 10px !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  .chart-wrapper canvas {
+    order: 1 !important;
+  }
+
+  /* Group / list items */
+  .group-list {
+    max-height: 220px !important;
+    gap: 8px !important;
+    padding-right: 0 !important;
+  }
+
+  .group-item {
+    padding: 10px 12px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+
+  .group-actions {
+    margin-left: 0 !important;
+    gap: 6px !important;
+    height: auto !important;
+  }
+
+  /* Notifications */
+  .notification {
+    top: 10px !important;
+    right: 10px !important;
+    padding: 10px !important;
+    font-size: 14px !important;
+    max-width: 90vw !important;
+  }
+}

@@ -1,0 +1,65 @@
+    /* ============================================= */
+    /* TABLES                                       */
+    /* ============================================= */
+
+    .card-temp .table-container {
+        padding: 0;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .scrollable-table-wrapper {
+        max-height: 520px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        margin-top: 0;
+    }
+
+    .custom-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 15px;
+        color: #374151;
+    }
+
+    .custom-table thead {
+        position: sticky;
+        top: 0;
+        background: #f9fafb;
+        color: #111827;
+        font-weight: 600;
+        z-index: 1;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        font-size: 13px;
+    }
+
+    .custom-table th,
+    .custom-table td {
+        padding: 14px 16px;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .custom-table tbody tr {
+        transition: background 0.2s ease;
+    }
+
+    .custom-table tbody tr:hover {
+        background: rgba(74, 144, 119, 0.08);
+    }
+
+    .custom-table tbody td:nth-child(4) {
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+
+    .no-data-msg {
+        padding: 25px;
+        text-align: center;
+        color: #6b7280;
+        font-size: 14px;
+        font-style: italic;
+    }

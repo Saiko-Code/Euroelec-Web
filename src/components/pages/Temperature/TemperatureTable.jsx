@@ -19,8 +19,7 @@ const TemperatureTable = ({
   return (
     <div className="temp-card">
       <div
-        className="card-temp custom-card"
-        style={{ width: "580px", height: "620px" }}
+        className="temp-card card-temp custom-card"
       >
         <div className="filter-by-group">
           <label htmlFor="filter-group-select">Filtrer par groupe :</label>

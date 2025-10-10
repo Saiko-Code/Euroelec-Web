@@ -1,7 +1,7 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import { FaEye, FaEdit, FaTrash, FaPlay, FaPause } from "react-icons/fa";
 
-// Helper pour afficher correctement les périodes ou jour
+// Helper pour afficher correctement les périodes ou jours
 const displayPeriod = (program) => {
   if (program.isMultiDay) {
     const startDay = program.startDay
@@ -25,6 +25,33 @@ const ProgramDetailRow = ({ label, value }) => (
   </div>
 );
 
+// ⚡ Trouve le programme actif ou prochain
+const getCurrentProgram = (programs) => {
+  const now = new Date();
+
+  const parseTime = (timeStr) => {
+    const [h, m] = timeStr.split(":").map(Number);
+    const d = new Date();
+    d.setHours(h, m, 0, 0);
+    return d;
+  };
+
+  const activePrograms = programs
+    .filter((p) => p.is_active)
+    .map((p) => ({ ...p, startDate: parseTime(p.start), endDate: parseTime(p.end) }))
+    .sort((a, b) => a.startDate - b.startDate);
+
+  if (activePrograms.length === 0) return null;
+
+  // Programme en cours
+  const current = activePrograms.find((p) => now >= p.startDate && now <= p.endDate);
+  if (current) return current;
+
+  // Sinon le prochain programme actif
+  const upcoming = activePrograms.find((p) => p.startDate > now);
+  return upcoming || null;
+};
+
 const ProgramCard = ({
   schedule,
   setSchedule,
@@ -33,6 +60,8 @@ const ProgramCard = ({
   setShowAllProgramsModal,
   setNotification,
 }) => {
+  const [activeProgram, setActiveProgram] = useState(null);
+
   // ⚡ Récupération des programmes depuis l'API
   const refreshPrograms = useCallback(async () => {
     try {
@@ -77,36 +106,34 @@ const ProgramCard = ({
     }
   }, [setSchedule, setNotification]);
 
-  // Chargement initial
+  // Chargement initial + actualisation activeProgram
   useEffect(() => {
     refreshPrograms();
   }, [refreshPrograms]);
 
+  // Met à jour le programme actif toutes les minutes
+  useEffect(() => {
+    const updateActiveProgram = () => setActiveProgram(getCurrentProgram(schedule));
+    updateActiveProgram(); // initial
+    const interval = setInterval(updateActiveProgram, 60 * 1000); // chaque minute
+    return () => clearInterval(interval);
+  }, [schedule]);
+
   // Supprimer un programme
   const deleteProgram = async (programId) => {
-    if (
-      !window.confirm("Êtes-vous sûr de vouloir supprimer cette programmation ?")
-    )
-      return;
+    if (!window.confirm("Êtes-vous sûr de vouloir supprimer cette programmation ?")) return;
     try {
       const response = await fetch(
         `http://${process.env.REACT_APP_SERVER_IP}:${process.env.REACT_APP_SERVER_PORT}/air-program/${programId}`,
         { method: "DELETE" }
       );
-      if (!response.ok)
-        throw new Error("Erreur lors de la suppression de la programmation");
+      if (!response.ok) throw new Error("Erreur lors de la suppression de la programmation");
 
-      setNotification({
-        type: "success",
-        message: "Programmation supprimée avec succès.",
-      });
-      refreshPrograms(); // ⚡ recharge depuis la BDD
+      setNotification({ type: "success", message: "Programmation supprimée avec succès." });
+      refreshPrograms();
     } catch (err) {
       console.error(err);
-      setNotification({
-        type: "error",
-        message: err.message || "Erreur lors de la suppression.",
-      });
+      setNotification({ type: "error", message: err.message || "Erreur lors de la suppression." });
     }
   };
 
@@ -122,20 +149,13 @@ const ProgramCard = ({
           body: JSON.stringify({ is_active: newStatus }),
         }
       );
-      if (!response.ok)
-        throw new Error("Erreur lors de la modification du statut");
+      if (!response.ok) throw new Error("Erreur lors de la modification du statut");
 
-      setNotification({
-        type: "success",
-        message: `Programme ${newStatus ? "activé" : "désactivé"}.`,
-      });
-      refreshPrograms(); // ⚡ recharge la liste après modif
+      setNotification({ type: "success", message: `Programme ${newStatus ? "activé" : "désactivé"}.` });
+      refreshPrograms();
     } catch (err) {
       console.error(err);
-      setNotification({
-        type: "error",
-        message: err.message || "Erreur lors de la modification du programme.",
-      });
+      setNotification({ type: "error", message: err.message || "Erreur lors de la modification du programme." });
     }
   };
 
@@ -154,15 +174,12 @@ const ProgramCard = ({
     return ((now - start) / (end - start)) * 100;
   };
 
-  const activeProgram = schedule.find((p) => p.is_active);
-  const otherPrograms = schedule.filter((p) => !p.is_active);
+  const otherPrograms = schedule.filter((p) => p !== activeProgram);
 
   return (
     <div className="programm-card">
       <div className="card-schedule custom-card">
-        <div className="custom-card-header green">
-          Programmation ventilation
-        </div>
+        <div className="custom-card-header green">Programmation ventilation</div>
         <div className="custom-card-body">
           {/* Programme en cours */}
           <div className="current-program-container">
@@ -170,10 +187,10 @@ const ProgramCard = ({
             {activeProgram ? (
               <div className="program-active">
                 <div className="program-header">
-                  <h4>
-                    {activeProgram.name} - {activeProgram.action}
-                  </h4>
-                  <span className="program-status active">ACTIF</span>
+                  <div className="program-header-left">
+                    <h4>{activeProgram.name} - {activeProgram.action}</h4>
+                    <span className="program-status active">ACTIF</span>
+                  </div>
                   <div className="program-item-actions">
                     <button onClick={() => toggleProgram(activeProgram)}>
                       {activeProgram.is_active ? <FaPause /> : <FaPlay />}
@@ -184,58 +201,31 @@ const ProgramCard = ({
                   </div>
                 </div>
                 <div className="program-details">
-                  <ProgramDetailRow
-                    label="Jour:"
-                    value={displayPeriod(activeProgram)}
-                  />
-                  <ProgramDetailRow
-                    label="Heure:"
-                    value={`${activeProgram.start} - ${activeProgram.end}`}
-                  />
-
-                  {/* Progression avec pourcentage */}
+                  <ProgramDetailRow label="Jour:" value={displayPeriod(activeProgram)} />
+                  <ProgramDetailRow label="Heure:" value={`${activeProgram.start} - ${activeProgram.end}`} />
                   <div className="progress-container">
-                    <div className="progress-header">
-                      Progression :{" "}
-                      {Math.round(computeProgress(activeProgram))}%
-                    </div>
-                    <div className="progress-bar-wrapper">
-                      <div
-                        className="progress-bar"
-                        style={{
-                          width: `${computeProgress(activeProgram)}%`,
-                        }}
-                      />
+                    <div className="progress-bar" style={{ width: `${computeProgress(activeProgram)}%` }}>
+                      <span className="progress-percentage">{Math.round(computeProgress(activeProgram))}%</span>
                     </div>
                   </div>
                 </div>
               </div>
             ) : (
-              <p className="no-programs">Aucun programme en cours.</p>
+              <p className="no-programs">Aucun programme actif en ce moment.</p>
             )}
           </div>
 
           {/* Programmes créés */}
           <div className="recent-programs-container">
-            <div className="recent-programs-title">
-              Programmes créés ({otherPrograms.length})
-            </div>
+            <div className="recent-programs-title">Programmes créés ({otherPrograms.length})</div>
             {otherPrograms.length > 0 ? (
               <div className="recent-programs-list">
                 {otherPrograms.map((program, index) => (
-                  <div
-                    key={program.id || `program-${index}`}
-                    className="recent-program-item"
-                  >
+                  <div key={program.id || `program-${index}`} className="recent-program-item">
                     <div className="program-item-header">
                       <h4>{displayPeriod(program)}</h4>
                       <div className="program-item-actions">
-                        <button
-                          onClick={() => {
-                            setEditingProgram(program);
-                            setShowProgramModal(true);
-                          }}
-                        >
+                        <button onClick={() => { setEditingProgram(program); setShowProgramModal(true); }}>
                           <FaEdit />
                         </button>
                         <button onClick={() => deleteProgram(program.id)}>
@@ -247,28 +237,11 @@ const ProgramCard = ({
                       </div>
                     </div>
                     <div className="program-item-details">
-                      <ProgramDetailRow
-                        label="Nom:"
-                        value={program.name || "N/A"}
-                      />
-                      <ProgramDetailRow
-                        label="Jour:"
-                        value={displayPeriod(program)}
-                      />
-                      <ProgramDetailRow
-                        label="Heure:"
-                        value={`${program.start || "00:00"} - ${
-                          program.end || "00:00"
-                        }`}
-                      />
-                      <ProgramDetailRow
-                        label="Action:"
-                        value={program.action || "N/A"}
-                      />
-                      <ProgramDetailRow
-                        label="État:"
-                        value={program.is_active ? "ACTIF" : "INACTIF"}
-                      />
+                      <ProgramDetailRow label="Nom:" value={program.name || "N/A"} />
+                      <ProgramDetailRow label="Jour:" value={displayPeriod(program)} />
+                      <ProgramDetailRow label="Heure:" value={`${program.start || "00:00"} - ${program.end || "00:00"}`} />
+                      <ProgramDetailRow label="Action:" value={program.action || "N/A"} />
+                      <ProgramDetailRow label="État:" value={program.is_active ? "ACTIF" : "INACTIF"} />
                     </div>
                   </div>
                 ))}
@@ -280,20 +253,11 @@ const ProgramCard = ({
 
           {/* Actions */}
           <div className="program-actions-container">
-            <button
-              className="custom-btn blue add-program-btn"
-              onClick={() => {
-                setShowProgramModal(true);
-                setEditingProgram(null);
-              }}
-            >
+            <button className="custom-btn blue add-program-btn" onClick={() => { setShowProgramModal(true); setEditingProgram(null); }}>
               Ajouter un programme
             </button>
             {schedule.length > 2 && (
-              <button
-                className="custom-btn green view-all-btn"
-                onClick={() => setShowAllProgramsModal(true)}
-              >
+              <button className="custom-btn blue view-all-btn" onClick={() => setShowAllProgramsModal(true)}>
                 <FaEye /> Voir tous les programmes ({schedule.length})
               </button>
             )}

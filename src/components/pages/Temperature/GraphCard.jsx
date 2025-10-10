@@ -32,52 +32,50 @@ const toInputDate = (value) => {
   return isNaN(d) ? "" : d.toISOString().split("T")[0];
 };
 
-const SensorLine = React.memo(({ sensor, color }) => (
-  <Line
-    type="natural"
-    dataKey={sensor}
-    name={sensor}
-    stroke={color}
-    dot={{ r: 4 }}
-    activeDot={{ r: 6 }}
-    connectNulls
-    isAnimationActive={false}
-  />
-));
-
-const SensorBar = React.memo(({ sensor, color }) => (
-  <Bar
-    dataKey={sensor}
-    name={sensor}
-    fill={color}
-    barSize={20}
-    isAnimationActive={false}
-  />
-));
+const CustomTooltip = ({ active, payload, label }) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div
+      style={{
+        background: "#fff",
+        border: "1px solid #ccc",
+        padding: "10px",
+        borderRadius: "6px",
+        fontSize: "13px",
+      }}
+    >
+      <p><strong>{label}</strong></p>
+      {payload.map((p, i) => (
+        <p key={i} style={{ color: p.color, margin: 0 }}>
+          {p.name}: {p.value ?? "-"}
+        </p>
+      ))}
+    </div>
+  );
+};
 
 const GraphCard = React.memo(
   ({
-    isSingleDate = false,
+    isSingleDate = true,
     selectedSingleDate,
     setSelectedSingleDate,
     selectedStartDate,
     setSelectedStartDate,
     selectedEndDate,
     setSelectedEndDate,
-    sensorsList = [],
-    sensorVisibility = {},
-    toggleSensorVisibility,
+    groups = [],
+    groupVisibility = {},
+    toggleGroupVisibility,
     tempsToDisplay = [],
     setShowGraphModal,
   }) => {
-    // Filtrage des données selon la sélection
     const filteredData = useMemo(() => {
       if (!tempsToDisplay.length) return [];
       return isSingleDate
         ? tempsToDisplay.filter((t) => t.isoDate === selectedSingleDate)
         : tempsToDisplay.filter(
-          (t) => t.isoDate >= selectedStartDate && t.isoDate <= selectedEndDate
-        );
+            (t) => t.isoDate >= selectedStartDate && t.isoDate <= selectedEndDate
+          );
     }, [tempsToDisplay, isSingleDate, selectedSingleDate, selectedStartDate, selectedEndDate]);
 
     const chartData = useMemo(
@@ -85,151 +83,202 @@ const GraphCard = React.memo(
       [filteredData, isSingleDate]
     );
 
-    const visibleSensors = useMemo(
-      () => Object.entries(sensorVisibility).filter(([, v]) => v),
-      [sensorVisibility]
-    );
+    const visibleSensors = useMemo(() => {
+      return groups
+        .filter((g) => groupVisibility[g.id])
+        .flatMap((g) => g.sensors.map((s) => ({ group: g.name, sensor: s })));
+    }, [groups, groupVisibility]);
 
-    const hasData = chartData.length > 0 && sensorsList.length > 0;
+    const hasData = chartData.length > 0 && visibleSensors.length > 0;
 
     return (
       <div className="graph-card">
-        <div className="card-container custom-card full-width" style={{ minHeight: "580px" }}>
-<div className="custom-card-header-graph">
-  <div className="graph-title-container">
-    <h3>Graphique des températures</h3>
-    <div className="date-selector-container">
-      {isSingleDate ? (
-        <div className="single-date-field">
-          <div className="date-input-container">
-            <label htmlFor="single-date">Date :</label>
-            <input
-              id="single-date"
-              type="date"
-              value={toInputDate(selectedSingleDate)}
-              onChange={(e) => setSelectedSingleDate?.(e.target.value)}
-              className="date-input"
-            />
-          </div>
-        </div>
-      ) : (
-        <div className="date-range-container">
-          <div className="date-range-fields">
-            <div className="date-input-container">
-              <label htmlFor="start-date">Date de début :</label>
-              <input
-                id="start-date"
-                type="date"
-                value={toInputDate(selectedStartDate)}
-                onChange={(e) => setSelectedStartDate?.(e.target.value)}
-                className="date-input"
-              />
-            </div>
-            <div className="date-input-container">
-              <label htmlFor="end-date">Date de fin :</label>
-              <input
-                id="end-date"
-                type="date"
-                value={toInputDate(selectedEndDate)}
-                onChange={(e) => setSelectedEndDate?.(e.target.value)}
-                className="date-input"
-              />
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  </div>
-</div>
+        <div className="card-container custom-card full-width" style={{ minHeight: "650px" }}>
+          {/* === HEADER === */}
+          <div
+            className="custom-card-header-graph"
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              padding: "15px 20px",
+              borderBottom: "1px solid #e0e0e0",
+            }}
+          >
+            <h3 style={{ margin: 0 }}>📈 Graphique des températures</h3>
 
+            {/* Sélecteur de date */}
+            <div
+              className="date-selector"
+              style={{
+                display: "flex",
+                gap: "10px",
+                alignItems: "center",
+                flexWrap: "wrap",
+              }}
+            >
+              {isSingleDate ? (
+                <>
+                  <label>Date :</label>
+                  <input
+                    type="date"
+                    value={toInputDate(selectedSingleDate)}
+                    onChange={(e) => setSelectedSingleDate(e.target.value)}
+                    className="date-input"
+                  />
+                </>
+              ) : (
+                <>
+                  <label>Du :</label>
+                  <input
+                    type="date"
+                    value={toInputDate(selectedStartDate)}
+                    onChange={(e) => setSelectedStartDate(e.target.value)}
+                    className="date-input"
+                  />
+                  <label>Au :</label>
+                  <input
+                    type="date"
+                    value={toInputDate(selectedEndDate)}
+                    onChange={(e) => setSelectedEndDate(e.target.value)}
+                    className="date-input"
+                  />
+                </>
+              )}
+            </div>
+          </div>
 
-          <div className="custom-card-body chart-container" style={{ height: 520 }}>
+          {/* === CONTROLES (Boutons de groupe + bouton agrandir) === */}
+          <div
+            className="group-controls"
+            style={{
+              display: "flex",
+              justifyContent: "flex-start",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: "8px",
+              padding: "12px 20px",
+              background: "#f9f9f9",
+              borderBottom: "1px solid #eee",
+            }}
+          >
+            <span style={{ fontWeight: "600" }}>Groupes visibles :</span>
+            {groups.map((group) => (
+              <button
+                key={group.id}
+                className={`sensor-toggle-btn ${groupVisibility[group.id] ? "active" : ""}`}
+                onClick={() => toggleGroupVisibility(group.id)}
+                style={{
+                  padding: "6px 12px",
+                  borderRadius: "20px",
+                  border: "1px solid #ccc",
+                  background: groupVisibility[group.id] ? "#2c82c9" : "#fff",
+                  color: groupVisibility[group.id] ? "#fff" : "#333",
+                  cursor: "pointer",
+                  fontSize: "13px",
+                  transition: "all 0.2s ease",
+                }}
+              >
+                {group.name}
+              </button>
+            ))}
+
+            {/* Bouton d'agrandissement aligné à droite */}
+            <div style={{ marginLeft: "auto" }}>
+              <button
+                className="custom-btn blue"
+                onClick={() => setShowGraphModal?.(true)}
+                style={{
+                  padding: "6px 12px",
+                  borderRadius: "20px",
+                  background: "#2c82c9",
+                  color: "#fff",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  transition: "background 0.2s",
+                }}
+              >
+                🔍 Agrandir le graphique
+              </button>
+            </div>
+          </div>
+
+          {/* === GRAPHIQUE === */}
+          <div className="custom-card-body chart-container" style={{ height: 480 }}>
             {hasData ? (
-              <>
-                <div className="chart-header-container">
-                  <h3 className="chart-title">
-                    {isSingleDate
-                      ? `Températures du ${selectedSingleDate}`
-                      : `Températures du ${selectedStartDate} au ${selectedEndDate}`}
-                  </h3>
-
-                  <div className="chart-controls">
-                    <div className="sensor-visibility-controls">
-                      <span className="sensor-visibility-label">Capteurs visibles :</span>
-                      <div className="sensor-buttons-container">
-                        {sensorsList.sort().map((sensor) => (
-                          <button
-                            key={sensor}
-                            className={`sensor-toggle-btn ${sensorVisibility[sensor] ? "active" : ""}`}
-                            onClick={() => toggleSensorVisibility(sensor)}
-                          >
-                            {sensor}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <ResponsiveContainer width="100%" height="100%">
-                  {isSingleDate ? (
-                    <LineChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 60 }}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis
-                        dataKey="heure"
-                        label={{ value: "Heure", position: "insideBottom", offset: -5 }}
-                        angle={-30}
-                        textAnchor="end"
-                        height={80}
-                        tick={{ fontSize: 12 }}
+              <ResponsiveContainer width="100%" height="100%">
+                {isSingleDate ? (
+                  <LineChart
+                    data={chartData}
+                    margin={{ top: 20, right: 30, left: 10, bottom: 40 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis
+                      dataKey="heure"
+                      angle={-30}
+                      textAnchor="end"
+                      height={70}
+                      tick={{ fontSize: 12 }}
+                    />
+                    <YAxis domain={["auto", "auto"]} tick={{ fontSize: 12 }} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend verticalAlign="top" height={36} />
+                    {visibleSensors.map((sensorObj, idx) => (
+                      <Line
+                        key={sensorObj.sensor}
+                        type="monotone"
+                        dataKey={sensorObj.sensor}
+                        name={`${sensorObj.group} - ${sensorObj.sensor}`}
+                        stroke={colors[idx % colors.length]}
+                        strokeWidth={2}
+                        dot={{ r: 3 }}
+                        activeDot={{ r: 6 }}
+                        isAnimationActive={false}
                       />
-                      <YAxis
-                        domain={["auto", "auto"]}
-                        label={{ value: "Température (°C)", angle: -90, position: "insideLeft" }}
-                        tick={{ fontSize: 12 }}
+                    ))}
+                  </LineChart>
+                ) : (
+                  <BarChart
+                    data={chartData}
+                    margin={{ top: 20, right: 30, left: 10, bottom: 40 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis
+                      dataKey="time"
+                      angle={-30}
+                      textAnchor="end"
+                      height={70}
+                      tickFormatter={(tick) =>
+                        new Date(tick).toLocaleDateString("fr-FR", {
+                          day: "2-digit",
+                          month: "short",
+                        })
+                      }
+                      tick={{ fontSize: 12 }}
+                    />
+                    <YAxis domain={["auto", "auto"]} tick={{ fontSize: 12 }} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend verticalAlign="top" height={36} />
+                    {visibleSensors.map((sensorObj, idx) => (
+                      <Bar
+                        key={sensorObj.sensor}
+                        dataKey={sensorObj.sensor}
+                        name={`${sensorObj.group} - ${sensorObj.sensor}`}
+                        fill={colors[idx % colors.length]}
+                        barSize={20}
+                        isAnimationActive={false}
                       />
-                      <Tooltip />
-                      <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: "14px" }} />
-                      {visibleSensors.map(([sensor], idx) => (
-                        <SensorLine key={sensor} sensor={sensor} color={colors[idx % colors.length]} />
-                      ))}
-                    </LineChart>
-                  ) : (
-                    <BarChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis
-                        dataKey="time"
-                        label={{ value: "Date", position: "insideBottom", offset: -5 }}
-                        angle={-30}
-                        textAnchor="end"
-                        height={80}
-                        tickFormatter={(tick) =>
-                          new Date(tick).toLocaleDateString("fr-FR", { day: "2-digit", month: "short" })
-                        }
-                        tick={{ fontSize: 12 }}
-                        interval="preserveStartEnd"
-                      />
-                      <YAxis
-                        domain={["auto", "auto"]}
-                        label={{ value: "Température (°C)", angle: -90, position: "insideLeft" }}
-                        tick={{ fontSize: 12 }}
-                      />
-                      <Tooltip />
-                      <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: "14px" }} />
-                      {visibleSensors.map(([sensor], idx) => (
-                        <SensorBar key={sensor} sensor={sensor} color={colors[idx % colors.length]} />
-                      ))}
-                    </BarChart>
-                  )}
-                </ResponsiveContainer>
-              </>
+                    ))}
+                  </BarChart>
+                )}
+              </ResponsiveContainer>
             ) : (
-              <p className="no-data-msg">Pas de données disponibles pour générer le graphique.</p>
+              <p className="no-data-msg" style={{ textAlign: "center", marginTop: "50px" }}>
+                ⚠️ Pas de données disponibles pour la date sélectionnée.
+              </p>
             )}
-
-            <button className="custom-btn blue" style={{ marginTop: "15px" }} onClick={() => setShowGraphModal?.(true)}>
-              Agrandir le graphique
-            </button>
           </div>
         </div>
       </div>

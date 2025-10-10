@@ -1,0 +1,158 @@
+  /* ============================================= */
+  /*               GRAPHIQUE CARD                  */
+  /* ============================================= */
+
+    /* Style pour le conteneur flex horizontal */
+    .select-date {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+
+    }
+
+    /* Chaque groupe date (label + input) */
+    .date-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+      min-width: 160px;
+      position: relative;
+    }
+
+    /* Labels stylisés */
+    .date-input-group label {
+      font-weight: 600;
+      color: #374151;
+      font-size: 14px;
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-left: 4px;
+    }
+
+    .date-input-group label::before {
+      content: '📅';
+      font-size: 14px;
+      opacity: 0.7;
+    }
+
+    /* Inputs de type date stylisés */
+    .date-input-group input[type="date"] {
+      padding: 14px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 15px;
+      background: white;
+      color: #374151;
+      font-weight: 500;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.04),
+        inset 0 1px 2px rgba(255, 255, 255, 0.9);
+      width: 100%;
+      cursor: pointer;
+
+      /* Style pour le calendrier icon */
+      background-image: none;
+      position: relative;
+    }
+
+    /* Hover state */
+    .date-input-group input[type="date"]:hover {
+      border-color: #cbd5e1;
+      box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.08),
+        inset 0 1px 2px rgba(255, 255, 255, 0.9);
+      transform: translateY(-1px);
+    }
+
+    /* Focus state */
+    .date-input-group input[type="date"]:focus {
+      outline: none;
+      border-color: var(--primary-color, #346a4e);
+      box-shadow:
+        0 0 0 4px rgba(52, 106, 78, 0.12),
+        0 4px 12px rgba(0, 0, 0, 0.08),
+        inset 0 1px 2px rgba(255, 255, 255, 0.9);
+      transform: translateY(-1px);
+    }
+
+    /* Style pour les inputs invalides */
+    .date-input-group input[type="date"]:invalid {
+      border-color: #f87171;
+      box-shadow:
+        0 0 0 4px rgba(248, 113, 113, 0.12),
+        0 4px 12px rgba(248, 113, 113, 0.08);
+    }
+
+    .custom-card-header-graph {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 15px;
+      background-color: var(--primary-color);
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .graph-title-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .graph-title-container h3 {
+      margin: 5px;
+      font-size: 20px;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .date-selector-container {
+      display: flex;
+      justify-content: flex-end;
+      /* Aligne le conteneur à droite */
+      width: 100%;
+    }
+
+    .single-date-field,
+    .date-range-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .date-range-fields {
+      display: flex;
+      gap: 15px;
+    }
+
+    .date-input-container {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .date-input-container label {
+      font-size: 14px;
+      color: #ffffff;
+      font-weight: 500;
+    }
+
+    .date-input {
+      padding: 8px 12px;
+      border: 1px solid #ced4da;
+      border-radius: 15px;
+      font-size: 0.9rem;
+      background-color: white;
+      cursor: pointer;
+    }
+
+    .date-input:focus {
+      outline: none;
+      border-color: #80bdff;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
