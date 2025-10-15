@@ -41,6 +41,58 @@
 }
 
 /* ============================================= */
+/* BOUTON DÉCONNEXION (ADAPTÉ AU DESIGN)         */
+/* ============================================= */
+.sidebar-logout {
+  position: absolute;
+  bottom: 25px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  width: 85%;
+  justify-content: center;
+}
+
+.logout-button:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+.sidebar.collapsed .logout-button {
+  width: 50px;
+  justify-content: center;
+  padding: 10px;
+}
+
+.sidebar.collapsed .logout-button span {
+  display: none;
+}
+
+/* Icône un peu plus grande pour cohérence */
+.logout-button i,
+.logout-button svg {
+  font-size: 1.2rem;
+}
+
+
+
+/* ============================================= */
 /* NAVIGATION LINKS                              */
 /* ============================================= */
 .sidebar-nav {

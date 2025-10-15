@@ -46,10 +46,8 @@ const GraphModal = ({
   tempsToDisplay = [],
   setShowGraphModal,
 }) => {
-  // Nettoyage et formatage des données
   const chartData = useMemo(() => {
     const baseData = prepareChartData(tempsToDisplay, isSingleDate) || [];
-    // Convertir en valeurs numériques et filtrer les NaN
     return baseData.map((row) => {
       const cleaned = {};
       Object.entries(row).forEach(([key, value]) => {
@@ -66,28 +64,11 @@ const GraphModal = ({
 
   return (
     <div className="modal-overlay graph-modal">
-      <div
-        className="modal-content graph-modal-content"
-        style={{ height: "75vh", width: "90vw" }}
-      >
-        {/* === HEADER AVEC SÉLECTEUR DE DATE === */}
-        <div
-          className="modal-header"
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: "10px",
-            padding: "10px 20px",
-          }}
-        >
-          <h3 style={{ margin: 0 }}>Graphique en grand</h3>
-
-          <div
-            className="date-selector"
-            style={{ display: "flex", gap: "10px", alignItems: "center" }}
-          >
+      <div className="modal-content graph-modal-content" style={{ height: "75vh", width: "90vw" }}>
+        {/* HEADER */}
+        <div className="modal-header">
+          <h3>Graphique en grand</h3>
+          <div className="date-selector">
             {isSingleDate ? (
               <>
                 <label>Date :</label>
@@ -114,67 +95,38 @@ const GraphModal = ({
               </>
             )}
           </div>
-
-          <button
-            className="close-modal"
-            onClick={() => setShowGraphModal(false)}
-            style={{
-              background: "none",
-              border: "none",
-              fontSize: "24px",
-              cursor: "pointer",
-              color: "#666",
-            }}
-          >
+          <button className="close-modal" onClick={() => setShowGraphModal(false)}>
             ×
           </button>
         </div>
 
-        {/* === CONTROLES DES CAPTEURS === */}
+        {/* CAPTEURS */}
         <div className="chart-controls">
-          <div className="sensor-visibility-controls">
-            <span className="sensor-visibility-label">
-              Sélectionnez les capteurs :
-            </span>
-            <div className="sensor-buttons-container">
-              {sensorsList.map((sensor) => (
-                <button
-                  key={sensor}
-                  className={`sensor-toggle-btn ${
-                    sensorVisibility[sensor] ? "active" : ""
-                  }`}
-                  onClick={() => toggleSensorVisibility(sensor)}
-                >
-                  {sensor}
-                </button>
-              ))}
-            </div>
+          <span>Sélectionnez les capteurs :</span>
+          <div className="sensor-buttons-container">
+            {sensorsList.map((sensor, idx) => (
+              <button
+                key={sensor}
+                className={`sensor-toggle-btn ${sensorVisibility[sensor] ? "active" : ""}`}
+                onClick={() => toggleSensorVisibility(sensor)}
+                style={{ background: sensorVisibility[sensor] ? colors[idx % colors.length] : "rgba(74,144,119,0.1)" }}
+              >
+                {sensor}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* === GRAPHIQUE === */}
+        {/* GRAPHIQUE */}
         <div className="modal-body" style={{ flex: 1, minHeight: "60vh" }}>
           <ResponsiveContainer width="100%" height="100%">
             {isSingleDate ? (
-              <LineChart
-                data={chartData}
-                margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
-              >
+              <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="heure"
-                  angle={-30}
-                  textAnchor="end"
-                  height={40}
-                  tick={{ fontSize: 12 }}
-                />
+                <XAxis dataKey="heure" angle={-30} textAnchor="end" height={40} tick={{ fontSize: 12 }} />
                 <YAxis
                   domain={["auto", "auto"]}
-                  label={{
-                    value: "Température (°C)",
-                    angle: -90,
-                    position: "insideLeft",
-                  }}
+                  label={{ value: "Température (°C)", angle: -90, position: "insideLeft" }}
                   tick={{ fontSize: 12 }}
                 />
                 <Tooltip />
@@ -197,24 +149,12 @@ const GraphModal = ({
                     />
                   ))}
 
-                {/* Courbe extérieure si disponible */}
                 {chartData[0]?.exterior !== undefined && (
-                  <Line
-                    type="monotone"
-                    dataKey="exterior"
-                    name="Extérieur"
-                    stroke="#FF0000"
-                    strokeWidth={2}
-                    dot={false}
-                    connectNulls
-                  />
+                  <Line type="monotone" dataKey="exterior" name="Extérieur" stroke="#FF0000" strokeWidth={2} dot={false} connectNulls />
                 )}
               </LineChart>
             ) : (
-              <ComposedChart
-                data={chartData}
-                margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
-              >
+              <ComposedChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis
                   dataKey="time"
@@ -222,19 +162,12 @@ const GraphModal = ({
                   textAnchor="end"
                   height={50}
                   tickFormatter={(tick) =>
-                    new Date(tick).toLocaleDateString("fr-FR", {
-                      day: "2-digit",
-                      month: "short",
-                    })
+                    new Date(tick).toLocaleDateString("fr-FR", { day: "2-digit", month: "short" })
                   }
                 />
                 <YAxis
                   domain={["auto", "auto"]}
-                  label={{
-                    value: "Température (°C)",
-                    angle: -90,
-                    position: "insideLeft",
-                  }}
+                  label={{ value: "Température (°C)", angle: -90, position: "insideLeft" }}
                 />
                 <Tooltip />
                 <Legend verticalAlign="top" height={30} wrapperStyle={{ fontSize: "14px" }} />
@@ -242,14 +175,7 @@ const GraphModal = ({
                 {Object.entries(sensorVisibility)
                   .filter(([_, visible]) => visible)
                   .map(([sensor], idx) => (
-                    <Bar
-                      key={sensor}
-                      dataKey={sensor}
-                      name={sensor}
-                      fill={colors[idx % colors.length]}
-                      barSize={20}
-                      isAnimationActive={false}
-                    />
+                    <Bar key={sensor} dataKey={sensor} name={sensor} fill={colors[idx % colors.length]} barSize={20} isAnimationActive={false} />
                   ))}
               </ComposedChart>
             )}

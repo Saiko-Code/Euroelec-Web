@@ -5,6 +5,7 @@ import Login from "./components/pages/login";
 import Signup from "./components/pages/sign-up";
 import Dashboard from "./components/pages/dashboard";
 import TemperaturePage from "./components/pages/temperature-page";
+import Contact from "./components/pages/contact";
 import ProtectedRoute from "./utils/ProtectedRoutes";
 
 const App = () => {
@@ -31,6 +32,16 @@ const App = () => {
           element={
             <ProtectedRoute>
               <TemperaturePage />
+            </ProtectedRoute>
+          }
+        />
+
+        
+        <Route
+          path="/contact"
+          element={
+            <ProtectedRoute>
+              <Contact />
             </ProtectedRoute>
           }
         />
