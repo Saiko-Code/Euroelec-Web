@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo, useCallback } from "react";
+import { FaBars, FaTimes } from "react-icons/fa";
 import Sidebar from "../../layouts/sidebar";
 import GraphCard from "./Temperature/GraphCard";
 import TemperatureTable from "./Temperature/TemperatureTable";
@@ -18,9 +19,9 @@ const TemperaturePage = () => {
   const [groupVisibility, setGroupVisibility] = useState({});
   const [sensorVisibility, setSensorVisibility] = useState({});
   const [showGraphModal, setShowGraphModal] = useState(false);
-  const [showDots, setShowDots] = useState(true);
   const [selectedFilterGroupId, setSelectedFilterGroupId] = useState("");
   const [lastUpdate, setLastUpdate] = useState(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const firstLoad = useRef(true);
 
@@ -77,7 +78,7 @@ const TemperaturePage = () => {
   useEffect(() => {
     fetchTemperatures();
     fetchGroups();
-  }, []);
+  }, [fetchTemperatures, fetchGroups]);
 
   // ---- INITIALISER VISIBILITÉ GROUPES ----
   useEffect(() => {
@@ -96,6 +97,10 @@ const TemperaturePage = () => {
     (sensor) => setSensorVisibility((prev) => ({ ...prev, [sensor]: !prev[sensor] })),
     []
   );
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen((prev) => !prev);
+  };
 
   // ---- TEMPÉRATURES FILTRÉES ----
   const tempsToDisplay = useMemo(() => {
@@ -120,19 +125,26 @@ const TemperaturePage = () => {
 
   // ---- RENDU ----
   return (
-    <div className="temperature-container">
-      <Sidebar />
-      <div className="main-content">
+    <Sidebar isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)}>
+      <div className="temperature-container">
+        <button
+          className="hamburger-menu-btn"
+          onClick={toggleMobileMenu}
+          aria-label="Menu"
+        >
+          {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
+        </button>
+
         <h1 className="section-title">Monitoring des températures</h1>
 
-        <div className="cards-container mt-6">
+        <div className="cards-container">
           {/* Card globale avec stats (moyenne, min, max, écart) */}
-          <TemperatureGlobal 
+          <TemperatureGlobal
             tempsToDisplay={tempsToDisplay}
             groups={groups}
             selectedFilterGroupId={selectedFilterGroupId}
-            setSelectedFilterGroupId={setSelectedFilterGroupId} />
-          
+            setSelectedFilterGroupId={setSelectedFilterGroupId}
+          />
 
           {/* Graphique interactif */}
           <GraphCard
@@ -151,7 +163,6 @@ const TemperaturePage = () => {
             sensorsList={sensorsList}
             sensorVisibility={sensorVisibility}
             toggleSensorVisibility={toggleSensorVisibility}
-            showDots={showDots}
             setShowGraphModal={setShowGraphModal}
           />
 
@@ -186,7 +197,7 @@ const TemperaturePage = () => {
           </div>
         )}
       </div>
-    </div>
+    </Sidebar>
   );
 };
 

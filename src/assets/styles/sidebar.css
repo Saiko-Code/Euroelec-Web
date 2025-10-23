@@ -162,12 +162,39 @@
 /* ============================================= */
 .main-content {
   margin-left: 260px;
-  padding: 20px;
+  padding: 0;
+  min-height: 100vh;
   transition: margin-left 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  background: transparent;
+}
+
+.main-content > * {
+  flex: 1 0 auto;
 }
 
 .sidebar.collapsed ~ .main-content {
   margin-left: 80px;
+}
+
+@media (max-width: 1200px) {
+  .main-content {
+    margin-left: 240px;
+  }
+
+  .sidebar.collapsed ~ .main-content {
+    margin-left: 72px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
 }
 
 /* ============================================= */
@@ -185,6 +212,7 @@
 
   .main-content {
     margin-left: 0;
+    padding: 0;
   }
 
   .overlay {
@@ -200,5 +228,40 @@
 
   .sidebar.open ~ .overlay {
     display: block;
+  }
+}
+
+.hamburger-menu-btn {
+  display: none;
+  border: none;
+  background: var(--primary-color, #346a4e);
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hamburger-menu-btn svg {
+  font-size: 1.2rem;
+}
+
+.hamburger-menu-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 24px rgba(0, 0, 0, 0.18);
+}
+
+@media (max-width: 1024px) {
+  .hamburger-menu-btn {
+    display: inline-flex;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 1300;
   }
 }

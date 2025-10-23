@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
-import { FiThermometer, FiActivity, FiSun } from "react-icons/fi";
+import { FiActivity } from "react-icons/fi";
 
 /**
  * TemperatureGlobal

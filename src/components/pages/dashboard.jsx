@@ -43,7 +43,7 @@ const TemperatureCards = () => {
   const [dlSingleDate, setDlSingleDate] = useState("");
 
   // GraphCard dates
-  const [grIsSingleDate, setGrIsSingleDate] = useState(false);
+  const grIsSingleDate = false;
   const [grStartDate, setGrStartDate] = useState("");
   const [grEndDate, setGrEndDate] = useState("");
   const [grSingleDate, setGrSingleDate] = useState("");
@@ -185,88 +185,88 @@ const TemperatureCards = () => {
   );
 
   return (
-    <div className="temperature-container">
-      {/* Bouton hamburger pour mobile */}
-      <button 
-        className="hamburger-menu-btn" 
-        onClick={toggleMobileMenu}
-        aria-label="Menu"
-      >
-        {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
-      </button>
+    <Sidebar isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)}>
+      <div className="temperature-container">
+        {/* Bouton hamburger pour mobile */}
+        <button
+          className="hamburger-menu-btn"
+          onClick={toggleMobileMenu}
+          aria-label="Menu"
+        >
+          {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
+        </button>
 
-      {notification && (
-        <div className={`notification ${notification.type}`}>
-          <FaBell className="notification-icon" />
-          <span className="notification-message">{notification.message}</span>
+        {notification && (
+          <div className={`notification ${notification.type}`}>
+            <FaBell className="notification-icon" />
+            <span className="notification-message">{notification.message}</span>
+          </div>
+        )}
+
+        <h1 className="section-title">Dashboard de votre installation</h1>
+
+        <div className="cards-container">
+          <DownloadCard
+            isSingleDate={dlIsSingleDate} setIsSingleDate={setDlIsSingleDate}
+            selectedStartDate={dlStartDate} setSelectedStartDate={setDlStartDate}
+            selectedEndDate={dlEndDate} setSelectedEndDate={setDlEndDate}
+            selectedSingleDate={dlSingleDate} setSelectedSingleDate={setDlSingleDate}
+            archivedTemperatures={archivedTemperatures} tempsToDisplay={tempsToDownload}
+          />
+
+          <GroupCard
+            groups={groups} setGroups={setGroups} sensorsList={sensorsList} setNotification={setNotification}
+          />
+
+          <ProgramCard
+            schedule={schedule} setSchedule={setSchedule}
+            setShowProgramModal={setShowProgramModal} setEditingProgram={setEditingProgram}
+            setShowAllProgramsModal={setShowAllProgramsModal}
+            progression={progression} setProgression={setProgression}
+            setNotification={setNotification}
+          />
         </div>
-      )}
 
-      <h1 className="section-title">Dashboard de votre installation</h1>
+        {showProgramModal && (
+          <ProgramModal
+            editingProgram={editingProgram} setEditingProgram={setEditingProgram}
+            setShowProgramModal={setShowProgramModal}
+            setSchedule={setSchedule} setFilteredSchedule={setSchedule}
+            setNotification={setNotification} schedule={schedule}
+          />
+        )}
 
-      <div className="cards-container">
-        <Sidebar isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
+        {showAllProgramsModal && (
+          <AllProgramsModal
+            filteredSchedule={schedule} setShowAllProgramsModal={setShowAllProgramsModal}
+            setEditingProgram={setEditingProgram} setShowProgramModal={setShowProgramModal}
+            searchTerm={searchTerm} setSearchTerm={setSearchTerm}
+            setNotification={setNotification} setSchedule={setSchedule}
+          />
+        )}
 
-        <DownloadCard
-          isSingleDate={dlIsSingleDate} setIsSingleDate={setDlIsSingleDate}
-          selectedStartDate={dlStartDate} setSelectedStartDate={setDlStartDate}
-          selectedEndDate={dlEndDate} setSelectedEndDate={setDlEndDate}
-          selectedSingleDate={dlSingleDate} setSelectedSingleDate={setDlSingleDate}
-          archivedTemperatures={archivedTemperatures} tempsToDisplay={tempsToDownload}
-        />
+        {showGraphModal && (
+          <GraphModal
+            isSingleDate={grIsSingleDate}
+            sensorsList={sensorsList}
+            sensorVisibility={sensorVisibility}
+            toggleSensorVisibility={toggleSensorVisibility}
+            tempsToDisplay={tempsToDisplay}
+            setShowGraphModal={setShowGraphModal}
+            groups={groups}
+            groupVisibility={groupVisibility}
+            toggleGroupVisibility={toggleGroupVisibility}
+          />
+        )}
 
-        <GroupCard
-          groups={groups} setGroups={setGroups} sensorsList={sensorsList} setNotification={setNotification}
-        />
-
-        <ProgramCard
-          schedule={schedule} setSchedule={setSchedule}
-          setShowProgramModal={setShowProgramModal} setEditingProgram={setEditingProgram}
-          setShowAllProgramsModal={setShowAllProgramsModal}
-          progression={progression} setProgression={setProgression}
-          setNotification={setNotification}
-        />
+        {lastUpdate && (
+          <div className="last-update">
+            Dernière mise à jour :{" "}
+            {formatDate(lastUpdate, { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+          </div>
+        )}
       </div>
-
-      {showProgramModal && (
-        <ProgramModal
-          editingProgram={editingProgram} setEditingProgram={setEditingProgram}
-          setShowProgramModal={setShowProgramModal}
-          setSchedule={setSchedule} setFilteredSchedule={setSchedule}
-          setNotification={setNotification} schedule={schedule}
-        />
-      )}
-
-      {showAllProgramsModal && (
-        <AllProgramsModal
-          filteredSchedule={schedule} setShowAllProgramsModal={setShowAllProgramsModal}
-          setEditingProgram={setEditingProgram} setShowProgramModal={setShowProgramModal}
-          searchTerm={searchTerm} setSearchTerm={setSearchTerm}
-          setNotification={setNotification} setSchedule={setSchedule}
-        />
-      )}
-
-      {showGraphModal && (
-        <GraphModal
-          isSingleDate={grIsSingleDate}
-          sensorsList={sensorsList}
-          sensorVisibility={sensorVisibility}
-          toggleSensorVisibility={toggleSensorVisibility}
-          tempsToDisplay={tempsToDisplay}
-          setShowGraphModal={setShowGraphModal}
-          groups={groups}
-          groupVisibility={groupVisibility}
-          toggleGroupVisibility={toggleGroupVisibility}
-        />
-      )}
-
-      {lastUpdate && (
-        <div className="last-update">
-          Dernière mise à jour :{" "}
-          {formatDate(lastUpdate, { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
-        </div>
-      )}
-    </div>
+    </Sidebar>
   );
 };
 

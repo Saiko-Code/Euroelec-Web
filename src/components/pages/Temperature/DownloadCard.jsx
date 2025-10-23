@@ -16,7 +16,6 @@ const DownloadCard = ({
   tempsToDisplay,
 }) => {
   const [exportFormat, setExportFormat] = useState("excel"); // "excel" ou "pdf"
-  const [showPreview, setShowPreview] = useState(false);
 
   // Récupère toutes les dates uniques en ISO (YYYY-MM-DD)
   const getSortedIsoDates = (order = "asc") => {

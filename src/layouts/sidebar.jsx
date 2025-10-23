@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import "../assets/styles/sidebar.css";
 import logoImg from "../assets/images/logo_euroelec.png";
 
-const Sidebar = ({ isOpen: externalIsOpen, onClose }) => {
+const Sidebar = ({ isOpen: externalIsOpen, onClose, children }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [internalIsOpen, setInternalIsOpen] = useState(false);
@@ -21,7 +21,6 @@ const Sidebar = ({ isOpen: externalIsOpen, onClose }) => {
 
   // Utiliser l'état externe si fourni, sinon l'état interne
   const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
-  const setIsOpen = onClose ? () => onClose() : setInternalIsOpen;
 
   useEffect(() => {
     const handleResize = () => {
@@ -34,6 +33,17 @@ const Sidebar = ({ isOpen: externalIsOpen, onClose }) => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [onClose]);
+
+  useEffect(() => {
+    if (isMobile && isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobile, isOpen]);
 
   // Fermer avec la touche Escape
   useEffect(() => {
@@ -143,7 +153,7 @@ const Sidebar = ({ isOpen: externalIsOpen, onClose }) => {
 
       {/* ===== MAIN CONTENT ===== */}
       <main className={`main-content ${isCollapsed ? "collapsed" : ""}`}>
-        {/* Contenu principal des pages */}
+        {children}
       </main>
     </>
   );

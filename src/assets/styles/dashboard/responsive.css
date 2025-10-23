@@ -1,274 +1,125 @@
 /* ============================================= */
-/* RESPONSIVE - MOBILE                          */
+/* RESPONSIVE - DASHBOARD LAYOUT                 */
 /* ============================================= */
-@media (max-width: 600px) {
-  html, body {
-    touch-action: manipulation;
-    overscroll-behavior: contain;
-    user-select: none;
-    -webkit-user-select: none;
-    -webkit-touch-callout: none;
-  }
 
-  body {
-    touch-action: pan-x pan-y;
-    overscroll-behavior-y: contain;
-  }
-
-  input, select, textarea, button, canvas {
-    touch-action: manipulation;
-    user-select: none;
-    -webkit-user-select: none;
-    -webkit-touch-callout: none;
-  }
-
-  /* Container principal */
+@media (max-width: 1024px) {
   .temperature-container {
-    padding: 12px !important;
-    margin-left: 0 !important;
-    min-height: auto !important;
+    max-width: 100%;
+    padding: clamp(2.25rem, 2vw + 1.5rem, 3rem);
+    padding-top: clamp(5rem, 5vw + 2rem, 5.75rem);
+    border-radius: 20px;
+    box-shadow: var(--shadow-sm);
   }
 
   .section-title {
-    font-size: 22px !important;
-    margin-top: 10px !important;
-    margin-bottom: 18px !important;
+    margin-bottom: 1.5rem;
   }
 
   .cards-container {
-    grid-template-columns: 1fr !important;
-    gap: 16px !important;
-    margin: 0 !important;
-  }
-
-  .bottom-section {
-    grid-template-columns: 1fr !important;
-    gap: 16px !important;
-    margin-top: 18px !important;
-  }
-
-  /* Cards */
-  .programm-card,
-  .card-temp,
-  .card-download,
-  .group-card,
-  .temp-card,
-  .custom-card {
-    grid-column: auto !important;
-    grid-row: auto !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    margin-bottom: 16px !important;
-    height: auto !important;
-  }
-
-  .graph-card,
-  .temp-ext-card,
-  .stats-widget-card,
-  .custom-card {
-    grid-column: auto !important;
-    grid-row: auto !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    margin-bottom: 16px !important;
-    margin-left: -20px;
-    height: auto !important;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
   }
 
   .custom-card-header,
   .custom-card-header-graph {
-    padding: 10px 12px !important;
-    font-size: 16px !important;
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
   }
 
-  .programm-card .custom-card-body,
-  .card-temp .custom-card-body,
-  .group-card .custom-card-body,
-  .graph-card .custom-card-body,
-  .temp-card .custom-card-body,
-  .card-download .custom-card-body,
-    .temp-ext-card .custom-card-body,
-  .stats-widget-card .custom-card-body {
-    padding: 12px !important;
-    overflow-y: visible !important;
-    min-height: 0 !important;
-  }
-
-  /* Boutons */
-  .open-sidebar-btn {
-    display: block !important;
-    position: fixed !important;
-    top: 16px !important;
-    left: 16px !important;
-    z-index: 1200 !important;
-    background: var(--primary-color) !important;
-    color: #ff0000 !important;
-    border: none !important;
-    border-radius: 50% !important;
-    width: 44px !important;
-    height: 44px !important;
-    font-size: 22px !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
-    cursor: pointer !important;
-    transition: background 0.2s !important;
-  }
-
-  .open-sidebar-btn:hover {
-    background: var(--secondary-color) !important;
-  }
-
-  .add-program-btn,
-  .view-all-btn,
-  .download-btn {
-    width: 100% !important;
-    margin-right: 0 !important;
-    margin-bottom: 10px !important;
-    padding: 10px 0 !important;
-    font-size: 15px !important;
-  }
-
-  /* Tables */
-  .scrollable-table-wrapper {
-    max-height: 320px !important;
-  }
-
-  .custom-table th,
-  .custom-table td {
-    padding: 10px 8px !important;
-    font-size: 13px !important;
-  }
-
-  /* Form / Inputs */
-  .form-section,
-  .form-section-list {
-    padding: 10px !important;
-  }
-
-  .date-input-group {
-    min-width: 120px !important;
-    gap: 4px !important;
-  }
-
-  .date-input-group input[type="date"] {
-    padding: 10px 8px !important;
-    font-size: 13px !important;
-    border-radius: 8px !important;
-  }
-
-  .date-selector-container,
-  .single-date-field,
-  .date-range-container,
-  .date-range-fields {
-    flex-direction: column !important;
-    gap: 8px !important;
-    width: 100% !important;
-  }
-
-  .date-input-container label {
-    font-size: 13px !important;
-  }
-
-  .date-input {
-    font-size: 13px !important;
-    padding: 8px !important;
-    border-radius: 8px !important;
-  }
-
-  /* Program list */
-  .recent-programs-list {
-    flex-direction: column !important;
-    gap: 10px !important;
-    max-height: 350px !important;
-    padding-right: 0 !important;
-  }
-
-  .recent-program-item {
-    max-width: 100% !important;
-    padding: 12px !important;
-  }
-
-  .current-program-container {
-    padding: 12px !important;
-    max-height: none !important;
-  }
-
-  /* Charts */
-  .card-temp {
-    overflow-x: auto !important;
-    overflow-y: visible !important;
-    padding: 0 !important;
-  }
-
-  .custom-card-body.chart-container {
-    overflow-x: hidden !important;
-    overflow-y: visible !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    padding: 0 !important;
-  }
-
-  .chart-wrapper {
-    width: 100% !important;
-    min-width: 0 !important;
-    overflow-x: hidden !important;
-    overflow-y: visible !important;
-    touch-action: pan-y !important;
-    display: flex !important;
-    flex-direction: column !important;
-  }
-
-  .chart-container,
-  .chart-wrapper,
-  canvas {
-    touch-action: none !important;
-    user-select: none !important;
-    -webkit-user-select: none !important;
-    -webkit-touch-callout: none !important;
-    pointer-events: auto !important;
-  }
-
-  .chart-legend {
-    order: 2 !important;
-    margin-top: 10px !important;
-    display: flex !important;
-    flex-wrap: wrap !important;
-    justify-content: center !important;
-    gap: 10px !important;
-    width: 100% !important;
-  }
-
-  .chart-wrapper canvas {
-    order: 1 !important;
-  }
-
-  /* Group / list items */
-  .group-list {
-    max-height: 220px !important;
-    gap: 8px !important;
-    padding-right: 0 !important;
-  }
-
-  .group-item {
-    padding: 10px 12px !important;
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 8px !important;
+  .custom-card-body {
+    padding: 1.25rem;
   }
 
   .group-actions {
-    margin-left: 0 !important;
-    gap: 6px !important;
-    height: auto !important;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .temperature-container {
+    padding: 4.75rem 1.5rem 2.5rem;
+    border-radius: 16px;
   }
 
-  /* Notifications */
+  .section-title {
+    font-size: 1.65rem;
+    margin-bottom: 1.35rem;
+  }
+
+  .cards-container {
+    grid-template-columns: 1fr;
+    gap: 1.15rem;
+  }
+
+  .custom-card {
+    box-shadow: var(--shadow-sm);
+  }
+
+  .custom-card-body {
+    padding: 1rem;
+  }
+
+  .date-selector,
+  .group-controls {
+    gap: 0.75rem;
+  }
+
+  .group-list,
+  .recent-programs-list {
+    max-height: 260px;
+  }
+
   .notification {
-    top: 10px !important;
-    right: 10px !important;
-    padding: 10px !important;
-    font-size: 14px !important;
-    max-width: 90vw !important;
+    top: 72px;
+    left: 16px;
+    right: 16px;
+    width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .temperature-container {
+    padding: 4.9rem 1.1rem 1.75rem;
+  }
+
+  .section-title {
+    font-size: 1.45rem;
+  }
+
+  .custom-card-header,
+  .custom-card-header-graph {
+    font-size: 0.95rem;
+    padding: 0.65rem 0.85rem;
+  }
+
+  .custom-card-body {
+    padding: 0.85rem;
+  }
+
+  .date-input-group,
+  .date-range-fields,
+  .single-date-field,
+  .date-range-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .date-input-group {
+    min-width: 0;
+  }
+
+  .date-input-group input[type="date"],
+  .date-input {
+    font-size: 0.85rem;
+    padding: 0.65rem 0.75rem;
+  }
+
+  .sensor-toggle-btn,
+  .custom-btn {
+    width: 100%;
+  }
+
+  .notification {
+    top: 80px;
   }
 }

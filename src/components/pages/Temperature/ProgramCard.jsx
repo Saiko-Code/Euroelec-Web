@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from "react";
-import { FaEye, FaEdit, FaTrash, FaPlay, FaPause } from "react-icons/fa";
+import { FaTrash, FaPlay, FaPause } from "react-icons/fa";
 
 // Helper pour afficher correctement les périodes ou jours
 const displayPeriod = (program) => {
