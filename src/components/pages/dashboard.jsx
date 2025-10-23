@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo, useCallback } from "react";
-import { FaBell } from "react-icons/fa";
+import { FaBell, FaBars, FaTimes } from "react-icons/fa";
 import Sidebar from "../../layouts/sidebar";
 import DownloadCard from "./Temperature/DownloadCard";
 import GroupCard from "./Temperature/GroupCard";
@@ -32,6 +32,9 @@ const TemperatureCards = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [progression, setProgression] = useState(null);
   const [lastUpdate, setLastUpdate] = useState(null);
+
+  // État pour le menu hamburger
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // DownloadCard dates
   const [dlIsSingleDate, setDlIsSingleDate] = useState(false);
@@ -147,6 +150,11 @@ const TemperatureCards = () => {
     []
   );
 
+  // ✅ Toggle menu hamburger
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   // ✅ Températures à afficher (graph)
   const tempsToDisplay = useMemo(() => {
     if (!archivedTemperatures.length) return [];
@@ -178,6 +186,15 @@ const TemperatureCards = () => {
 
   return (
     <div className="temperature-container">
+      {/* Bouton hamburger pour mobile */}
+      <button 
+        className="hamburger-menu-btn" 
+        onClick={toggleMobileMenu}
+        aria-label="Menu"
+      >
+        {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
+      </button>
+
       {notification && (
         <div className={`notification ${notification.type}`}>
           <FaBell className="notification-icon" />
@@ -188,7 +205,7 @@ const TemperatureCards = () => {
       <h1 className="section-title">Dashboard de votre installation</h1>
 
       <div className="cards-container">
-        <Sidebar />
+        <Sidebar isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
 
         <DownloadCard
           isSingleDate={dlIsSingleDate} setIsSingleDate={setDlIsSingleDate}
@@ -241,8 +258,6 @@ const TemperatureCards = () => {
           groupVisibility={groupVisibility}
           toggleGroupVisibility={toggleGroupVisibility}
         />
-
-        
       )}
 
       {lastUpdate && (

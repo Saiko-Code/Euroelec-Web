@@ -226,13 +226,13 @@ const ProgramCard = ({
                       <h4>{displayPeriod(program)}</h4>
                       <div className="program-item-actions">
                         <button onClick={() => { setEditingProgram(program); setShowProgramModal(true); }}>
-                          <FaEdit />
+                          ✏️
                         </button>
                         <button onClick={() => deleteProgram(program.id)}>
-                          <FaTrash />
+                          🗑️
                         </button>
                         <button onClick={() => toggleProgram(program)}>
-                          {program.is_active ? <FaPause /> : <FaPlay />}
+                          {program.is_active ? "⏸️" : "▶️"}
                         </button>
                       </div>
                     </div>
@@ -258,7 +258,7 @@ const ProgramCard = ({
             </button>
             {schedule.length > 2 && (
               <button className="custom-btn blue view-all-btn" onClick={() => setShowAllProgramsModal(true)}>
-                <FaEye /> Voir tous les programmes ({schedule.length})
+                👀 Voir tous les programmes ({schedule.length})
               </button>
             )}
           </div>

@@ -97,7 +97,7 @@
     /* Zone des boutons */
     .program-item-actions {
       display: flex;
-      gap: 8px;
+      gap: 1px;
     }
 
     /* Détails */

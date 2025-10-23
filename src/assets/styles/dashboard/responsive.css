@@ -1,7 +1,7 @@
 /* ============================================= */
 /* RESPONSIVE - MOBILE                          */
 /* ============================================= */
-@media (max-width: 1000px) {
+@media (max-width: 600px) {
   html, body {
     touch-action: manipulation;
     overscroll-behavior: contain;
@@ -52,7 +52,6 @@
   .card-temp,
   .card-download,
   .group-card,
-  .graph-card,
   .temp-card,
   .custom-card {
     grid-column: auto !important;
@@ -61,6 +60,20 @@
     min-width: 0 !important;
     max-width: 100% !important;
     margin-bottom: 16px !important;
+    height: auto !important;
+  }
+
+  .graph-card,
+  .temp-ext-card,
+  .stats-widget-card,
+  .custom-card {
+    grid-column: auto !important;
+    grid-row: auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin-bottom: 16px !important;
+    margin-left: -20px;
     height: auto !important;
   }
 
@@ -75,7 +88,9 @@
   .group-card .custom-card-body,
   .graph-card .custom-card-body,
   .temp-card .custom-card-body,
-  .card-download .custom-card-body {
+  .card-download .custom-card-body,
+    .temp-ext-card .custom-card-body,
+  .stats-widget-card .custom-card-body {
     padding: 12px !important;
     overflow-y: visible !important;
     min-height: 0 !important;

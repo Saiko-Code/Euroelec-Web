@@ -6,7 +6,6 @@ import GraphModal from "./Temperature/Modals/GraphModal";
 import TemperatureGlobal from "./Temperature/TemperatureGlobal";
 import useFetch from "../../hooks/useFetch";
 import { formatDate } from "../../utils/format";
-import "../../assets/styles/dashboard.css";
 
 const toISODate = (date) => {
   const d = new Date(date);

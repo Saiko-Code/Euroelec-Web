@@ -9,40 +9,67 @@ import {
   FiMail,
   FiLogOut,
 } from "react-icons/fi";
-import { useNavigate } from "react-router-dom"; // ✅ Import navigation
+import { useNavigate } from "react-router-dom";
 import "../assets/styles/sidebar.css";
 import logoImg from "../assets/images/logo_euroelec.png";
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen: externalIsOpen, onClose }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const navigate = useNavigate(); // ✅ Hook navigation
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const navigate = useNavigate();
+
+  // Utiliser l'état externe si fourni, sinon l'état interne
+  const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
+  const setIsOpen = onClose ? () => onClose() : setInternalIsOpen;
 
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
-      if (!mobile) setIsOpen(false);
+      if (!mobile && onClose) onClose();
+      if (!mobile) setInternalIsOpen(false);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [onClose]);
+
+  // Fermer avec la touche Escape
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === "Escape" && isOpen && isMobile) {
+        if (onClose) onClose();
+        else setInternalIsOpen(false);
+      }
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [isOpen, isMobile, onClose]);
 
   const toggleSidebar = () => {
-    if (isMobile) setIsOpen(!isOpen);
-    else setIsCollapsed(!isCollapsed);
+    if (isMobile) {
+      if (onClose && isOpen) {
+        onClose();
+      } else {
+        setInternalIsOpen(!internalIsOpen);
+      }
+    } else {
+      setIsCollapsed(!isCollapsed);
+    }
   };
 
-  const closeSidebar = () => setIsOpen(false);
+  const closeSidebar = () => {
+    if (onClose) onClose();
+    else setInternalIsOpen(false);
+  };
 
   const handleLogout = () => {
-    // ✅ Suppression des tokens/session
-    localStorage.removeItem("token");
-    sessionStorage.clear();
-
-    // ✅ Redirection vers la page de login
+    // Suppression des tokens/session (mais pas avec localStorage en production)
+    // localStorage.removeItem("token");
+    // sessionStorage.clear();
+    
+    // Redirection vers la page de login
     navigate("/login");
   };
 
@@ -75,7 +102,7 @@ const Sidebar = () => {
             <img src={logoImg} alt="EuroElec logo" />
           </div>
           <button className="sidebar-toggle" onClick={toggleSidebar}>
-            {isCollapsed ? <FiMenu size={22} /> : <FiX size={22} />}
+            {isCollapsed || (isMobile && !isOpen) ? <FiMenu size={22} /> : <FiX size={22} />}
           </button>
         </div>
 

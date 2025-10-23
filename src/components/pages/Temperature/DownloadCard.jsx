@@ -320,7 +320,7 @@ const DownloadCard = ({
                   fontSize: '14px',
                   marginBottom: '6px'
                 }}>
-                  <FaCalendarAlt size={12} /> Date de début
+                   Date de début
                 </label>
                 <input
                   id="start-date"
@@ -348,7 +348,7 @@ const DownloadCard = ({
                   fontSize: '14px',
                   marginBottom: '6px'
                 }}>
-                  <FaCalendarAlt size={12} /> Date de fin
+                 Date de fin
                 </label>
                 <input
                   id="end-date"
