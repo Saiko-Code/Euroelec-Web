@@ -13,6 +13,12 @@ Installer toutes les dépendances
 ```bash
 npm install
 ```
+Installer PM2
+```
+npm install pm2 -g
+Voir la doc pour ajouter le lancement des programmes au démarrage du PC/Serveur
+https://pm2.keymetrics.io
+```
 Créé un fichier .env
 ```bash
 nano .env
@@ -46,13 +52,9 @@ DB_NAME= nom de la base
 REACT_APP_SERVER_IP= adresse ip de la machine
 REACT_APP_SERVER_PORT= 3001 ou 80 
 ```
-Lancer le serveur avec node
+Lancer le site web et serveur
 ```bash
-node .\server.js
-```
-Lancer le site web
-```bash
-npm start
+pm2 start ecosystem.config.js
 ```
 ## 🛠️ Tech Stack
 - [React](https://reactjs.org/)
