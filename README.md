@@ -14,10 +14,10 @@ Installer toutes les dépendances
 npm install
 ```
 Installer PM2
-```
-npm install pm2 -g
 Voir la doc pour ajouter le lancement des programmes au démarrage du PC/Serveur
 https://pm2.keymetrics.io
+```
+npm install pm2 -g
 ```
 Créé un fichier .env
 ```bash
