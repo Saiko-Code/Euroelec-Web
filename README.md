@@ -14,6 +14,7 @@ Installer toutes les dépendances
 npm install
 ```
 Installer PM2
+
 Voir la doc pour ajouter le lancement des programmes au démarrage du PC/Serveur
 https://pm2.keymetrics.io
 ```
@@ -36,8 +37,6 @@ MAIL_PORT=465
 MAIL_USER= ton.adresse@gmail.com
 MAIL_PASS= motdepasse_application
 MAIL_TO= adresse@gmail.com
-
-
 -------------------------
 # Connexion DB
 -------------------------
@@ -45,7 +44,6 @@ DB_HOST= adresse ip ou nom de domaine
 DB_USER= utilisateur
 DB_PASSWORD= mot de passe 
 DB_NAME= nom de la base
-
 -------------------------
 # Serveur IP
 -------------------------
