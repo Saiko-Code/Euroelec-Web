@@ -1,336 +1,516 @@
 /* ============================================= */
-    /* CARTE DE PROGRAMMATION - DESIGN AMÉLIORÉE     */
-    /* ============================================= */
+/* CARTE DE PROGRAMMATION - DESIGN PREMIUM       */
+/* ============================================= */
 
-    .current-program-container {
-      margin-bottom: 32px;
-      padding: 20px;
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.97), rgba(240, 255, 245, 0.97));
-      border-radius: var(--border-radius);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-      border: 1px solid rgba(74, 144, 119, 0.25);
-      backdrop-filter: blur(8px);
-      position: relative;
-      overflow-y: auto;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
+.current-program-container {
+  margin-bottom: 32px;
+  padding: 24px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(240, 255, 245, 0.95));
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(74, 144, 119, 0.08);
+  border: 1px solid rgba(74, 144, 119, 0.2);
+  backdrop-filter: blur(12px);
+  position: relative;
+  overflow-y: auto;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-    /* Animation subtile au hover */
-    .current-program-container:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
-    }
+/* Animation au hover avec effet de levée */
+.current-program-container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(74, 144, 119, 0.15);
+  border-color: rgba(74, 144, 119, 0.35);
+}
 
-    /* Bande colorée sur le côté */
-    .current-program-container::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 6px;
-      height: 100%;
-      background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
-      border-radius: var(--border-radius) 0 0 var(--border-radius);
-    }
+/* Bande colorée animée sur le côté */
+.current-program-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+  border-radius: 20px 0 0 20px;
+  transition: width 0.3s ease;
+}
 
-    /* Titre section */
-    .program-section-title {
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--primary-color);
-      margin-bottom: 16px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid rgba(74, 144, 119, 0.25);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+.current-program-container:hover::before {
+  width: 8px;
+}
 
-    .program-section-title::before {
-      content: "⏳";
-      font-size: 22px;
-    }
+/* Titre section avec icône animée */
+.program-section-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--primary-color);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 3px solid transparent;
+  border-image: linear-gradient(90deg, var(--primary-color), var(--secondary-color), transparent) 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
 
-    /* En-tête */
-    .current-program-container .program-header {
-      display: flex;
-      justify-content: space-between;
-      /* titre à gauche, boutons à droite */
-      align-items: center;
-      margin-bottom: 14px;
-    }
+.program-section-title::before {
+  content: "⏳";
+  font-size: 24px;
+  animation: pulse 2s ease-in-out infinite;
+}
 
-    .program-header-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      /* espace entre titre et badge */
-    }
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
 
-    .current-program-container .program-header h4 {
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--dark-color);
-      margin: 0;
-    }
+/* En-tête avec meilleure disposition */
+.current-program-container .program-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  padding: 12px 0;
+}
 
-    .program-active {
-      margin-bottom: 5px;
-    }
+.program-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
 
-    /* Badge statut */
-    .program-status {
-      padding: 4px 12px;
-      border-radius: 16px;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-      letter-spacing: 0.5px;
-    }
+.current-program-container .program-header h4 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--dark-color);
+  margin: 0;
+  letter-spacing: -0.3px;
+}
 
-    .program-status.active {
-      background: var(--success-color);
-      color: #fff;
-    }
+.program-active {
+  margin-bottom: 6px;
+}
 
-    /* Zone des boutons */
-    .program-item-actions {
-      display: flex;
-      gap: 8px;
-    }
+/* Badge statut amélioré */
+.program-status {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+  letter-spacing: 0.8px;
+  position: relative;
+  overflow: hidden;
+}
 
-    /* Détails */
-    .current-program-container .program-details {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+.program-status::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+}
 
-    .current-program-container .program-detail-row {
-      display: flex;
-      justify-content: flex-start;
-      font-size: 15px;
-      gap: 15px;
-      /* espace entre label et valeur */
-    }
+.program-status:hover::before {
+  left: 100%;
+}
 
-    .current-program-container .detail-label {
-      color: #6b7280;
-      font-weight: 500;
-      min-width: 50px;
-      /* assure un alignement uniforme */
-    }
+.program-status.active {
+  background: linear-gradient(135deg, var(--success-color), #059669);
+  color: #fff;
+  animation: activeGlow 2s ease-in-out infinite;
+}
 
-    .current-program-container .detail-value {
-      color: var(--dark-color);
-      font-weight: 600;
-    }
+@keyframes activeGlow {
+  0%, 100% { box-shadow: 0 3px 8px rgba(16, 185, 129, 0.3); }
+  50% { box-shadow: 0 3px 16px rgba(16, 185, 129, 0.5); }
+}
 
-    /* Progression */
-    .progress-container {
-      margin-top: 10px;
-      position: relative;
-      height: 26px;
-      /* plus épaisse */
-      background: rgba(74, 144, 119, 0.15);
-      border-radius: 13px;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-    }
+/* Zone des boutons */
+.program-item-actions {
+  display: flex;
+  gap: 4px;
+}
 
-    .progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-      border-radius: 13px;
-      transition: width 0.5s ease;
-    }
+/* Détails avec meilleur espacement */
+.current-program-container .program-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  border: 1px solid rgba(74, 144, 119, 0.1);
+}
 
-    .progress-percentage {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 13px;
-      font-weight: 700;
-      color: #fff;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
-      pointer-events: none;
-    }
+.current-program-container .program-detail-row {
+  display: flex;
+  justify-content: flex-start;
+  font-size: 15px;
+  gap: 20px;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
 
-    /* Actions générales */
-    .program-actions-container {
-      margin-top: 14px;
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-    }
+.current-program-container .program-detail-row:hover {
+  transform: translateX(4px);
+}
 
+.current-program-container .detail-label {
+  color: #6b7280;
+  font-weight: 600;
+  min-width: 80px;
+  position: relative;
+  padding-left: 20px;
+}
 
-    /* ------------------- PROGRAMMES RÉCENTS ------------------- */
-    .recent-programs-container {
-      margin-bottom: 32px;
-    }
+.current-program-container .detail-label::before {
+  content: "▸";
+  position: absolute;
+  left: 0;
+  color: var(--primary-color);
+  font-weight: 700;
+}
 
-    .recent-programs-title {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--dark-color);
-      margin-bottom: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+.current-program-container .detail-value {
+  color: var(--dark-color);
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
-    .recent-programs-list {
-      display: flex;
-      flex-direction: row;
-      gap: 15px;
-      max-height: 250px;
-      overflow-y: auto;
-      padding-right: 5px;
-      padding-bottom: 10px;
+/* Barre de progression premium */
+.progress-container {
+  margin-top: 16px;
+  position: relative;
+  height: 32px;
+  background: rgba(74, 144, 119, 0.12);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+}
 
-    }
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  border-radius: 16px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
 
-    /* Scrollbar custom */
-    .recent-programs-list::-webkit-scrollbar {
-      width: 6px;
-    }
+.progress-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: shimmer 2s infinite;
+}
 
-    .recent-programs-list::-webkit-scrollbar-thumb {
-      background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
-      border-radius: 6px;
-    }
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
 
-    .recent-programs-list::-webkit-scrollbar-track {
-      background: rgba(74, 144, 119, 0.1);
-      border-radius: 6px;
-    }
+.progress-percentage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  z-index: 1;
+}
 
-    /* Carte programme récent */
-    .recent-program-item {
-      padding: 16px;
-      background: #fff;
-      border-radius: 14px;
-      box-shadow: var(--shadow-light);
-      border: 1px solid rgba(74, 144, 119, 0.15);
-      transition: var(--transition-smooth);
-      max-width: 280px;
+/* Actions générales */
+.program-actions-container {
+  margin-top: 18px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
 
-    }
+/* ------------------- PROGRAMMES RÉCENTS ------------------- */
+.recent-programs-container {
+  margin-bottom: 32px;
+}
 
-    .recent-program-item:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-hover);
-    }
+.recent-programs-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--dark-color);
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 2px solid rgba(74, 144, 119, 0.15);
+}
 
-    .recent-program-item .program-item-header h4 {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--primary-color);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
+.recent-programs-list {
+  display: flex;
+  flex-direction: row;
+  gap: 18px;
+  max-height: 320px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 8px 5px 16px;
+  scroll-behavior: smooth;
+}
 
-    .recent-program-item .program-item-header h4::before {
-      content: "📌";
-      font-size: 14px;
-    }
+/* Scrollbar moderne */
+.recent-programs-list::-webkit-scrollbar {
+  height: 8px;
+}
 
-    .recent-program-item .program-item-details {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      margin-top: 8px;
-      align-items: flex-start;
-    }
+.recent-programs-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
 
-    .recent-program-item .program-detail-row {
-      font-size: 14px;
-      font-weight: 500;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px
-    }
+.recent-programs-list::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+}
 
-    /* Actions */
-    .program-item-actions button {
-      border: none;
-      background: transparent;
-      color: var(--primary-color);
-      font-size: 15px;
-      cursor: pointer;
-      margin-left: 6px;
-      transition: transform 0.2s, color 0.2s;
-    }
+.recent-programs-list::-webkit-scrollbar-track {
+  background: rgba(74, 144, 119, 0.08);
+  border-radius: 8px;
+}
 
-    .program-item-actions button:hover {
-      color: var(--secondary-color);
-      transform: scale(1.15);
-    }
+/* Carte programme récent premium */
+.recent-program-item {
+  padding: 20px;
+  background: linear-gradient(145deg, #fff, #fafffe);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(74, 144, 119, 0.08);
+  border: 1px solid rgba(74, 144, 119, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 280px;
+  max-width: 320px;
+  position: relative;
+  overflow: hidden;
+}
 
-    /* Boutons principaux */
-    .add-program-btn,
-    .view-all-btn {
-      box-sizing: border-box;
-      /* inclut les bordures dans la taille */
-      border-radius: var(--border-radius);
-      font-size: 14px;
-      font-weight: 600;
-      margin-right: 10px;
-      padding: 10px 18px;
-      transition: var(--transition-smooth);
-      border: 2px solid transparent;
-      /* <- bordure identique pour les deux */
-      text-align: center;
-      display: inline-flex;
-      align-items: center;
-      /* centre verticalement le texte */
-      justify-content: center;
-      /* centre horizontalement */
-    }
+.recent-program-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
 
-    /* Bouton "Ajouter un programme" */
-    .add-program-btn {
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-      color: #fff;
-      box-shadow: var(--shadow-light);
-    }
+.recent-program-item:hover::before {
+  transform: scaleX(1);
+}
 
-    .add-program-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-hover);
-    }
+.recent-program-item:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(74, 144, 119, 0.15);
+  border-color: rgba(74, 144, 119, 0.3);
+}
 
-    /* Bouton "Voir tout" */
-    .view-all-btn {
-      background: transparent;
-      border-color: var(--primary-color);
-      /* change juste la couleur de la bordure */
-      color: var(--primary-color);
-    }
+.recent-program-item .program-item-header h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
 
-    .view-all-btn:hover {
-      background: var(--primary-color);
-      color: #fff;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(74, 144, 119, 0.25);
-    }
+.recent-program-item .program-item-header h4::before {
+  content: "📌";
+  font-size: 16px;
+  animation: wiggle 3s ease-in-out infinite;
+}
 
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-15deg); }
+  75% { transform: rotate(15deg); }
+}
 
-    /* Message aucun programme */
-    .no-programs {
-      text-align: center;
-      padding: 24px;
-      color: #6b7280;
-      font-style: italic;
-      background: #f9fafb;
-      border-radius: 14px;
-      border: 1px dashed rgba(74, 144, 119, 0.25);
-    }
+.recent-program-item .program-item-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+  align-items: flex-start;
+}
 
+.recent-program-item .program-detail-row {
+  font-size: 14px;
+  font-weight: 500;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(74, 144, 119, 0.08);
+}
 
-    
+.recent-program-item .program-detail-row:last-child {
+  border-bottom: none;
+}
+
+/* Actions avec effets */
+.program-item-actions button {
+  border: none;
+  background: rgba(74, 144, 119, 0.1);
+  color: var(--primary-color);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.program-item-actions button:hover {
+  background: var(--primary-color);
+  color: #fff;
+  transform: scale(1.15) rotate(5deg);
+  box-shadow: 0 4px 12px rgba(74, 144, 119, 0.3);
+}
+
+/* Boutons principaux premium */
+.add-program-btn,
+.view-all-btn {
+  box-sizing: border-box;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 24px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid transparent;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  letter-spacing: 0.3px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Bouton "Ajouter un programme" */
+.add-program-btn {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(74, 144, 119, 0.3);
+}
+
+.add-program-btn::before {
+  content: "+";
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.add-program-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(74, 144, 119, 0.4);
+}
+
+.add-program-btn:active {
+  transform: translateY(-1px);
+}
+
+/* Bouton "Voir tout" */
+.view-all-btn {
+  background: transparent;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  position: relative;
+}
+
+.view-all-btn::after {
+  content: "→";
+  margin-left: 4px;
+  transition: transform 0.3s ease;
+}
+
+.view-all-btn:hover {
+  background: var(--primary-color);
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(74, 144, 119, 0.3);
+}
+
+.view-all-btn:hover::after {
+  transform: translateX(4px);
+}
+
+/* Message aucun programme */
+.no-programs {
+  text-align: center;
+  padding: 32px 24px;
+  color: #6b7280;
+  font-style: italic;
+  font-size: 15px;
+  background: linear-gradient(145deg, #f9fafb, #ffffff);
+  border-radius: 16px;
+  border: 2px dashed rgba(74, 144, 119, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.no-programs::before {
+  content: "📋";
+  display: block;
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.4;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .current-program-container {
+    padding: 18px;
+  }
+  
+  .recent-programs-list {
+    flex-direction: column;
+    max-height: none;
+  }
+  
+  .recent-program-item {
+    max-width: 100%;
+  }
+  
+  .program-actions-container {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .add-program-btn,
+  .view-all-btn {
+    width: 100%;
+  }
+}

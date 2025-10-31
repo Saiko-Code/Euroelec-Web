@@ -14,7 +14,7 @@
   padding: 20px 15px;
   transition: width 0.3s ease;
   z-index: 1200;
-  box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
 }
 
 .sidebar.collapsed {
@@ -41,7 +41,7 @@
 }
 
 /* ============================================= */
-/* BOUTON DÉCONNEXION (ADAPTÉ AU DESIGN)         */
+/* BOUTON DÉCONNEXION                            */
 /* ============================================= */
 .sidebar-logout {
   position: absolute;
@@ -84,13 +84,9 @@
   display: none;
 }
 
-/* Icône un peu plus grande pour cohérence */
-.logout-button i,
 .logout-button svg {
   font-size: 1.2rem;
 }
-
-
 
 /* ============================================= */
 /* NAVIGATION LINKS                              */
@@ -137,7 +133,7 @@
 }
 
 /* ============================================= */
-/* TOGGLE BUTTON                                 */
+/* TOGGLE BUTTON DESKTOP                         */
 /* ============================================= */
 .sidebar-toggle {
   background: rgba(255,255,255,0.2);
@@ -162,12 +158,25 @@
 /* ============================================= */
 .main-content {
   margin-left: 260px;
-  padding: 20px;
+  padding: 0;
+  min-height: 100vh;
   transition: margin-left 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  background: transparent;
 }
 
 .sidebar.collapsed ~ .main-content {
   margin-left: 80px;
+}
+
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
 }
 
 /* ============================================= */
@@ -185,6 +194,7 @@
 
   .main-content {
     margin-left: 0;
+    padding: 0;
   }
 
   .overlay {
@@ -194,11 +204,117 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
     z-index: 1100;
   }
 
   .sidebar.open ~ .overlay {
     display: block;
+  }
+}
+
+/* ============================================= */
+/* HAMBURGER MENU (EXTERNE + INTERNE FLUIDE)     */
+/* ============================================= */
+.hamburger-menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  animation: fadeSlideIn 0.1s ease-in-out both;
+}
+
+/* Position flottante avant ouverture */
+.hamburger-menu-btn.floating {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1300;
+}
+
+/* Position interne dans la sidebar ouverte */
+.hamburger-menu-btn.inside {
+  position: relative;
+  top: auto;
+  left: auto;
+  z-index: auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: none;
+}
+
+/* Hover / click */
+.hamburger-menu-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+.hamburger-menu-btn:active {
+  transform: scale(0.95);
+}
+
+/* Barres animées */
+.hamburger-icon {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  margin-right: 20px;
+}
+
+.hamburger-bar {
+  position: absolute;
+  width: 22px;
+  height: 2.5px;
+  background: #fff;
+  border-radius: 4px;
+  transition: all 0.1s ease-in-out;
+}
+
+.hamburger-bar:nth-child(1) { top: 0; }
+.hamburger-bar:nth-child(2) { top: 7px; }
+.hamburger-bar:nth-child(3) { top: 14px; }
+
+.hamburger-icon.open .hamburger-bar:nth-child(1) {
+  transform: rotate(45deg);
+  top: 7px;
+}
+
+.hamburger-icon.open .hamburger-bar:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-icon.open .hamburger-bar:nth-child(3) {
+  transform: rotate(-45deg);
+  top: 7px;
+}
+
+/* Animation d'apparition */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(1);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Caché sur desktop */
+@media (min-width: 1025px) {
+  .hamburger-menu-btn {
+    display: none;
   }
 }

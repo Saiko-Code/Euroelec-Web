@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo, useCallback } from "react";
+import { FaBars, FaTimes } from "react-icons/fa";
 import Sidebar from "../../layouts/sidebar";
 import GraphCard from "./Temperature/GraphCard";
 import TemperatureTable from "./Temperature/TemperatureTable";
@@ -6,11 +7,14 @@ import GraphModal from "./Temperature/Modals/GraphModal";
 import TemperatureGlobal from "./Temperature/TemperatureGlobal";
 import useFetch from "../../hooks/useFetch";
 import { formatDate } from "../../utils/format";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "../../assets/styles/dashboard.css";
 
 const toISODate = (date) => {
   const d = new Date(date);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+    d.getDate()
+  ).padStart(2, "0")}`;
 };
 
 const TemperaturePage = () => {
@@ -19,9 +23,9 @@ const TemperaturePage = () => {
   const [groupVisibility, setGroupVisibility] = useState({});
   const [sensorVisibility, setSensorVisibility] = useState({});
   const [showGraphModal, setShowGraphModal] = useState(false);
-  const [showDots, setShowDots] = useState(true);
   const [selectedFilterGroupId, setSelectedFilterGroupId] = useState("");
   const [lastUpdate, setLastUpdate] = useState(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const firstLoad = useRef(true);
 
@@ -42,7 +46,11 @@ const TemperaturePage = () => {
         return {
           ...item,
           isoDate: toISODate(d),
-          formattedDate: formatDate(d, { year: "numeric", month: "2-digit", day: "2-digit" }),
+          formattedDate: formatDate(d, {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          }),
         };
       });
 
@@ -78,7 +86,7 @@ const TemperaturePage = () => {
   useEffect(() => {
     fetchTemperatures();
     fetchGroups();
-  }, []);
+  }, [fetchTemperatures, fetchGroups]);
 
   // ---- INITIALISER VISIBILITÉ GROUPES ----
   useEffect(() => {
@@ -98,20 +106,35 @@ const TemperaturePage = () => {
     []
   );
 
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen((prev) => !prev);
+    document.body.classList.toggle("menu-open", !isMobileMenuOpen);
+  };
+
   // ---- TEMPÉRATURES FILTRÉES ----
   const tempsToDisplay = useMemo(() => {
     if (!archivedTemperatures.length) return [];
 
     let filtered = grIsSingleDate
       ? archivedTemperatures.filter((t) => t.isoDate === grSingleDate)
-      : archivedTemperatures.filter((t) => t.isoDate >= grStartDate && t.isoDate <= grEndDate);
+      : archivedTemperatures.filter(
+          (t) => t.isoDate >= grStartDate && t.isoDate <= grEndDate
+        );
 
     const visibleSensors = groups
       .filter((g) => groupVisibility[g.id])
       .flatMap((g) => g.sensors || []);
 
     return filtered.filter((t) => visibleSensors.includes(t.sensor_name));
-  }, [archivedTemperatures, grIsSingleDate, grStartDate, grEndDate, grSingleDate, groups, groupVisibility]);
+  }, [
+    archivedTemperatures,
+    grIsSingleDate,
+    grStartDate,
+    grEndDate,
+    grSingleDate,
+    groups,
+    groupVisibility,
+  ]);
 
   // ---- LISTE CAPTEURS ----
   const sensorsList = useMemo(
@@ -121,73 +144,101 @@ const TemperaturePage = () => {
 
   // ---- RENDU ----
   return (
-    <div className="temperature-container">
-      <Sidebar />
+    <Sidebar isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)}>
       <div className="main-content">
-        <h1 className="section-title">Monitoring des températures</h1>
+        <div className="temperature-container container-fluid py-2">
+          {/* ======== Bouton menu mobile ======== */}
+          <button
+            className="mobile-menu-btn d-md-none position-fixed top-0 start-0 m-3"
+            onClick={toggleMobileMenu}
+            aria-label="Menu"
+          >
+            {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
+          </button>
 
-        <div className="cards-container mt-6">
-          {/* Card globale avec stats (moyenne, min, max, écart) */}
-          <TemperatureGlobal 
-            tempsToDisplay={tempsToDisplay}
-            groups={groups}
-            selectedFilterGroupId={selectedFilterGroupId}
-            setSelectedFilterGroupId={setSelectedFilterGroupId} />
-          
+          <h1 className="section-title text-center mb-3">
+            Monitoring des températures
+          </h1>
 
-          {/* Graphique interactif */}
-          <GraphCard
-            isSingleDate={grIsSingleDate}
-            setIsSingleDate={setGrIsSingleDate}
-            selectedStartDate={grStartDate}
-            setSelectedStartDate={setGrStartDate}
-            selectedEndDate={grEndDate}
-            setSelectedEndDate={setGrEndDate}
-            selectedSingleDate={grSingleDate}
-            setSelectedSingleDate={setGrSingleDate}
-            tempsToDisplay={tempsToDisplay}
-            groups={groups}
-            groupVisibility={groupVisibility}
-            toggleGroupVisibility={toggleGroupVisibility}
-            sensorsList={sensorsList}
-            sensorVisibility={sensorVisibility}
-            toggleSensorVisibility={toggleSensorVisibility}
-            showDots={showDots}
-            setShowGraphModal={setShowGraphModal}
-          />
+          <div className="row g-3">
+            {/* ======== Graphique (masqué sur mobile) ======== */}
+            <div className="col-12 d-none d-md-block">
+              <div className="custom-card">
+                  <GraphCard
+                    isSingleDate={grIsSingleDate}
+                    setIsSingleDate={setGrIsSingleDate}
+                    selectedStartDate={grStartDate}
+                    setSelectedStartDate={setGrStartDate}
+                    selectedEndDate={grEndDate}
+                    setSelectedEndDate={setGrEndDate}
+                    selectedSingleDate={grSingleDate}
+                    setSelectedSingleDate={setGrSingleDate}
+                    tempsToDisplay={tempsToDisplay}
+                    groups={groups}
+                    groupVisibility={groupVisibility}
+                    toggleGroupVisibility={toggleGroupVisibility}
+                    sensorsList={sensorsList}
+                    sensorVisibility={sensorVisibility}
+                    toggleSensorVisibility={toggleSensorVisibility}
+                    setShowGraphModal={setShowGraphModal}
+                  />
+              </div>
+            </div>
 
-          {/* Tableau de températures */}
-          <TemperatureTable
-            tempsToDisplay={tempsToDisplay}
-            groups={groups}
-            selectedFilterGroupId={selectedFilterGroupId}
-            setSelectedFilterGroupId={setSelectedFilterGroupId}
-          />
-        </div>
+            {/* ======== Carte statistiques globales ======== */}
+            <div className="col-12 col-md-12 col-xl-4">
+              <div className="custom-card">
+                  <TemperatureGlobal
+                    tempsToDisplay={tempsToDisplay}
+                    groups={groups}
+                    selectedFilterGroupId={selectedFilterGroupId}
+                    setSelectedFilterGroupId={setSelectedFilterGroupId}
+                  />
+              </div>
+            </div>
 
-        {/* Modal */}
-        {showGraphModal && (
-          <GraphModal
-            isSingleDate={grIsSingleDate}
-            sensorsList={sensorsList}
-            sensorVisibility={sensorVisibility}
-            toggleSensorVisibility={toggleSensorVisibility}
-            tempsToDisplay={tempsToDisplay}
-            setShowGraphModal={setShowGraphModal}
-            groups={groups}
-            groupVisibility={groupVisibility}
-            toggleGroupVisibility={toggleGroupVisibility}
-          />
-        )}
-
-        {/* Dernière mise à jour */}
-        {lastUpdate && (
-          <div className="last-update">
-            Dernière mise à jour : {formatDate(lastUpdate, { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+            {/* ======== Tableau ======== */}
+            <div className="col-12 col-md-12 col-xl-8">
+              <div className="custom-card">
+                  <TemperatureTable
+                    tempsToDisplay={tempsToDisplay}
+                    groups={groups}
+                    selectedFilterGroupId={selectedFilterGroupId}
+                    setSelectedFilterGroupId={setSelectedFilterGroupId}
+                  />
+              </div>
+            </div>
           </div>
-        )}
+
+          {/* ======== Modal Graphique ======== */}
+          {showGraphModal && (
+            <GraphModal
+              isSingleDate={grIsSingleDate}
+              sensorsList={sensorsList}
+              sensorVisibility={sensorVisibility}
+              toggleSensorVisibility={toggleSensorVisibility}
+              tempsToDisplay={tempsToDisplay}
+              setShowGraphModal={setShowGraphModal}
+              groups={groups}
+              groupVisibility={groupVisibility}
+              toggleGroupVisibility={toggleGroupVisibility}
+            />
+          )}
+
+          {/* ======== Dernière mise à jour ======== */}
+          {lastUpdate && (
+            <div className="text-center last-update mt-4">
+              Dernière mise à jour :{" "}
+              {formatDate(lastUpdate, {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              })}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </Sidebar>
   );
 };
 

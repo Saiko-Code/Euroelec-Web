@@ -16,7 +16,6 @@ const DownloadCard = ({
   tempsToDisplay,
 }) => {
   const [exportFormat, setExportFormat] = useState("excel"); // "excel" ou "pdf"
-  const [showPreview, setShowPreview] = useState(false);
 
   // Récupère toutes les dates uniques en ISO (YYYY-MM-DD)
   const getSortedIsoDates = (order = "asc") => {
@@ -320,7 +319,7 @@ const DownloadCard = ({
                   fontSize: '14px',
                   marginBottom: '6px'
                 }}>
-                  <FaCalendarAlt size={12} /> Date de début
+                   Date de début
                 </label>
                 <input
                   id="start-date"
@@ -348,7 +347,7 @@ const DownloadCard = ({
                   fontSize: '14px',
                   marginBottom: '6px'
                 }}>
-                  <FaCalendarAlt size={12} /> Date de fin
+                 Date de fin
                 </label>
                 <input
                   id="end-date"

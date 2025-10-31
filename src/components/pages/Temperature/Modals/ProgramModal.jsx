@@ -23,7 +23,7 @@ const ProgramModal = ({
   setEditingProgram,
   setShowProgramModal,
   setNotification,
-  refreshPrograms, // ⚡ On attend une fonction du parent pour recharger la liste
+  refreshPrograms,
 }) => {
   const [selectedDays, setSelectedDays] = useState([]);
   const [dayTimes, setDayTimes] = useState({});
@@ -31,18 +31,19 @@ const ProgramModal = ({
   const [repeatDays, setRepeatDays] = useState([]);
   const [programName, setProgramName] = useState("");
 
-  // Remplir le formulaire si on édite un programme
+  // Préremplissage en mode édition
   useEffect(() => {
     if (editingProgram) {
       const daysList = (editingProgram.days || (editingProgram.day ? [editingProgram.day] : []))
         .filter(Boolean)
-        .map((day) => day.toLowerCase());
+        .map((d) => d.toLowerCase());
+
       setSelectedDays(daysList);
 
       const tempTimes = {};
       if (daysList.length > 0) {
-        tempTimes[daysList[0]] = { start: editingProgram.start || "" };
-        tempTimes[daysList[daysList.length - 1]] = { end: editingProgram.end || "" };
+        tempTimes[daysList[0]] = { start: editingProgram.start || "00:00:00" };
+        tempTimes[daysList[daysList.length - 1]] = { end: editingProgram.end || "23:59:59" };
       }
       setDayTimes(tempTimes);
       setProgramName(editingProgram.name || "");
@@ -90,24 +91,37 @@ const ProgramModal = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     const action = e.target.action.value;
+
     const activeDays = repeatEnabled ? repeatDays : selectedDays;
+    const isRepeated = repeatEnabled && repeatDays.length === DAYS.length;
+    const isMultiDay = !isRepeated && activeDays.length > 1;
 
     if (!programName.trim()) {
       return setNotification({ type: "error", message: "Veuillez saisir un nom pour le programme." });
     }
+
     if (activeDays.length === 0) {
       return setNotification({ type: "error", message: "Veuillez sélectionner au moins un jour." });
     }
 
+    // Correction : toujours définir start et end
+    const firstDay = activeDays[0];
+    const lastDay = activeDays[activeDays.length - 1];
+    const startTime = dayTimes[firstDay]?.start || "00:00:00";
+    const endTime = dayTimes[lastDay]?.end || "23:59:59";
+
     const payload = {
-      name: programName,
+      name: programName.trim(),
       action,
-      isMultiDay: activeDays.length > 1,
+      isMultiDay,
+      isRepeated,
       days: activeDays,
-      day: activeDays[0],
-      start: dayTimes[activeDays[0]]?.start || "",
-      end: dayTimes[activeDays[activeDays.length - 1]]?.end || "",
+      day: firstDay,
+      start: startTime,
+      end: endTime,
     };
+
+    console.log("Payload envoyé :", payload);
 
     try {
       const url = editingProgram
@@ -122,7 +136,11 @@ const ProgramModal = ({
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) throw new Error("Erreur lors de l'enregistrement");
+      const result = await response.json();
+      if (!response.ok) {
+        console.error("Réponse serveur:", result);
+        throw new Error(result.message || "Erreur lors de l'enregistrement");
+      }
 
       setNotification({
         type: "success",
@@ -130,9 +148,9 @@ const ProgramModal = ({
       });
 
       resetForm();
-      if (refreshPrograms) refreshPrograms(); // ⚡ Recharge depuis la BDD
+      if (refreshPrograms) refreshPrograms();
     } catch (err) {
-      console.error(err);
+      console.error("❌ Erreur handleSubmit:", err);
       setNotification({ type: "error", message: err.message || "Erreur serveur." });
     }
   };
@@ -144,7 +162,9 @@ const ProgramModal = ({
       <div className="modal-content">
         <div className="modal-header">
           <h3>{editingProgram ? "Modifier la programmation" : "Ajouter une programmation"}</h3>
-          <button className="close-modal" onClick={closeModal}>×</button>
+          <button className="close-modal" onClick={closeModal}>
+            ×
+          </button>
         </div>
 
         <form onSubmit={handleSubmit} className="schedule-form">
@@ -210,12 +230,15 @@ const ProgramModal = ({
                 className="custom-btn cancel-btn"
                 onClick={() => setRepeatEnabled(!repeatEnabled)}
               >
-                {repeatEnabled ? "Annuler la sélection de jours" : "Répéter sur certains jours"}
+                {repeatEnabled ? "Désactiver la répétition" : "Répéter sur certains jours"}
               </button>
               <button
                 type="button"
                 className="custom-btn submit-btn"
-                onClick={() => { setRepeatEnabled(true); setRepeatDays([...DAYS]); }}
+                onClick={() => {
+                  setRepeatEnabled(true);
+                  setRepeatDays([...DAYS]);
+                }}
               >
                 Répéter toute la semaine
               </button>
@@ -235,7 +258,7 @@ const ProgramModal = ({
               {editingProgram
                 ? "Enregistrer les modifications"
                 : activeDays.length > 1
-                ? `Programmer pour ${activeDays.length} jours`
+                ? `Programmer ${repeatEnabled ? "en répétition" : `pour ${activeDays.length} jours`}`
                 : "Ajouter la programmation"}
             </button>
             {editingProgram && (
